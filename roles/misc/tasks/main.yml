@@ -8,7 +8,7 @@
     archlinux_packages:
       - git
 
-- name: Sync git config
-  synchronize:
+- name: Copy git config
+  copy:
     src: git
-    dest: "{{ config_dir }}/git"
+    dest: "{{ config_dir }}"

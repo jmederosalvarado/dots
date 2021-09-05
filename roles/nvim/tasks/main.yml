@@ -9,10 +9,10 @@
     dest: "{{ data_dir }}/nvim/site/pack/packer/start/packer.nvim"
     repo: "https://github.com/wbthomason/packer.nvim"
 
-- name: Sync nvim config
-  synchronize:
+- name: Copy nvim config
+  copy:
     src: "{{ item }}"
-    dest: "{{ config_dir }}/nvim/{{ item }}"
+    dest: "{{ config_dir }}/nvim"
   loop:
     - lua
     - init.lua

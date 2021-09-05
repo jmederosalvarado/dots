@@ -9,8 +9,8 @@
       - zsh
       - starship
 
-- name: Sync zsh files
-  synchronize:
+- name: Copy zsh files
+  copy:
     src: "{{ item }}"
     dest: "{{ home_dir }}/{{ item | basename }}"
   loop:
@@ -18,7 +18,7 @@
     - zsh/.zshenv
     - zsh/.zshrc
 
-- name: Sync starship config
-  synchronize:
+- name: Copy starship config
+  copy:
     src: starship.toml
     dest: "{{ config_dir }}/starship.toml"

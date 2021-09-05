@@ -20,16 +20,16 @@
       - mpc
       - brightnessctl
 
-- name: Sync sway related config
-  synchronize:
+- name: Copy sway related config
+  copy:
     src: "{{ item }}"
-    dest: "{{ config_dir }}/{{ item }}"
+    dest: "{{ config_dir }}"
   loop:
     - sway
     - mako
     - waybar
 
-- name: Sync kitty config
-  synchronize:
+- name: Copy kitty config
+  copy:
     src: kitty
-    dest: "{{ config_dir }}/kitty"
+    dest: "{{ config_dir }}"
