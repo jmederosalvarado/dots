@@ -14,30 +14,40 @@
       - mpd
       - mpc
       - brightnessctl
-    state: present
 
-- name: Create the `aur_builder` user
-  user:
-    name: aur_builder
-    group: wheel
-
-- name: Allow the `aur_builder` user to run `sudo pacman` without a password
-  lineinfile:
-    path: /etc/sudoers.d/11-install-aur_builder
-    line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
-    create: yes
+      # fonts
+      - ttc-iosevka
+      - ttf-fira-code
+      - ttf-nerd-fonts-symbols
     state: present
-    validate: 'visudo -cf %s'
+  become: yes
 
-- name: Install `paru` using makepkg
-  aur:
-    name: paru
-    state: present
-    become: yes
-    become_user: aur_builder
+# This appears to be unnecessary
+#- name: Create the `aur_builder` user
+#user:
+#name: aur_builder
+#group: wheel
+#become: yes
+#
+#- name: Allow the `aur_builder` user to run `sudo pacman` without a password
+#lineinfile:
+#path: /etc/sudoers.d/11-install-aur_builder
+#line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+#create: yes
+#state: present
+#validate: 'visudo -cf %s'
+#become: yes
+#
+#- name: Install `paru` using makepkg
+#aur:
+#name: paru
+#state: present
+#become: yes
+#become_user: aur_builder
 
 - name: Install aur packages
   aur:
     name:
       - swaylock-effects
       - sway-launcher-desktop
+    state: present

@@ -2,6 +2,7 @@
   package:
     name: "{{ lookup('vars', ansible_facts['os_family'] | lower ~ '_packages') }}"
     state: present
+  become: yes
   vars:
     archlinux_packages:
       - base-devel

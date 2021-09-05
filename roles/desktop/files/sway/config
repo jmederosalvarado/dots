@@ -21,7 +21,7 @@ set $term kitty
 set $menu $scripts/launcher.sh
 
 ### Output configuration
-output * bg ~/.local/share/backgrounds/background fill
+#output * bg ~/.local/share/backgrounds/background fill
 # primary left - secondary right
 #output eDP-1 position 0 0 subpixel rgb
 #output DP-3 position 1920 0 subpixel rgb

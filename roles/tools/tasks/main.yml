@@ -4,6 +4,7 @@
       - git
       - docker
     state: present
+  become: yes
   tags:
     - install
 

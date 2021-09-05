@@ -26,21 +26,7 @@ setopt multios              # Allow multiple redirection streams
 # COMPLETIONS {{{
 
 # Load all stock functions (from $fpath files) called below.
-autoload -U compinit
-
-# Add completions folder to fpath
-# fpath=($XDG_DATA_DIR/zsh/completions $fpath)
-
-# Check for insecure directories
-# Remember to add compaudit to previous autoload
-# Tip: `compaudit | xargs chmod g-w`
-# compaudit
-
-# Load only from secure directories
-# Option `-d ...` is given to adhere to xdg spec
-# See: https://wiki.archlinux.org/title/XDG_Base_Directory
-# compinit -i -C -d "$ZSH_CACHE_HOME/zcompdump"
-compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
+autoload -U compinit && compinit -d "$HOME/.zcompdump"
 
 # This settings are a simplification of settings at
 # https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/completion.zsh
@@ -85,7 +71,7 @@ bindkey . rationalise_dot
 
 # use caching so that commands like apt and dpkg complete are usable
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zshcompdump"
+zstyle ':completion:*' cache-path "$HOME/.zshcompdump"
 
 # automatically load bash completion functions
 autoload -U +X bashcompinit && bashcompinit
@@ -221,7 +207,7 @@ bindkey '^s' history-incremental-search-forward
 
 # HISTORY {{{
 
-HISTFILE="$XDG_DATA_HOME/zsh/history" 
+HISTFILE="$HOME/.zhistory" 
 HISTSIZE=50000
 SAVEHIST=10000
 
@@ -242,8 +228,8 @@ alias history='history -f' # timestamps follow mm/dd/yyyy
 # PLUGINS {{{
 
 # Configure syntax-highlighting and autosuggestions
-source_opt "$XDG_DATA_HOME/zsh/site/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-source_opt "$XDG_DATA_HOME/zsh/site/zsh-autosuggestions/zsh-autosuggestions.zsh"
+#source_opt "$XDG_DATA_HOME/zsh/site/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+#source_opt "$XDG_DATA_HOME/zsh/site/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # }}}
 
@@ -260,3 +246,5 @@ alias ll='ls -lh'
 export PATH="$HOME/.local/bin:$PATH"
 
 # }}}
+
+eval "$(starship init zsh)"

@@ -15,5 +15,5 @@
   roles:
     - { role: shell, tags: ['shell'] }
     - { role: nvim, tags: ['nvim'] }
-    - { role: misc, tags: ['misc'] }
+    - { role: tools, tags: ['tools'] }
     - { role: desktop, tags: ['desktop'] }

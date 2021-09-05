@@ -4,6 +4,7 @@
       - zsh
       - starship
     state: present
+  become: yes
   tags:
     - install
 

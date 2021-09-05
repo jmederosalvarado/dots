@@ -1,4 +1,5 @@
-- import_tasks: "{{ lookup('vars', ansible_facts['os_family'] | lower) }}"
+#- import_tasks: "{{ lookup('vars', ansible_facts['os_family'] | lower) }}.yml"
+- import_tasks: archlinux.yml
 
 - name: Copy sway related config
   copy:
