@@ -1,0 +1,18 @@
+- import_tasks: build.yml
+  tags:
+    - install
+  vars:
+    nvim_commit: dce50312e1e9af81fb0e3b61d6e70bdf286fbffb
+
+- name: Ensure Packer is in place
+  git:
+    dest: "{{ data_dir }}/nvim/site/pack/packer/start/packer.nvim"
+    repo: "https://github.com/wbthomason/packer.nvim"
+
+- name: Sync nvim config
+  synchronize:
+    src: "{{ item }}"
+    dest: "{{ config_dir }}/nvim/{{ item }}"
+  loop:
+    - lua
+    - init.lua

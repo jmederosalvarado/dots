@@ -1,0 +1,15 @@
+[user]
+	email = "jmederosalvarado@gmail.com"
+	name = "Jorge Mederos Alvarado"
+
+[init]
+	defaultBranch = "main"
+[pull]
+	rebase = false
+
+[credential "https://github.com"]
+	helper = "!/bin/gh auth git-credential"
+
+[credential "https://gitlab.com"]
+	helper = "!/bin/glab auth git-credential"
+

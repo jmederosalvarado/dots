@@ -1,0 +1,14 @@
+- name: Install required packages
+  package:
+    name: "{{ lookup('vars', ansible_facts['os_family'] | lower ~ '_packages') }}"
+    state: present
+  tags:
+    - install
+  vars:
+    archlinux_packages:
+      - git
+
+- name: Sync git config
+  synchronize:
+    src: git
+    dest: "{{ config_dir }}/git"

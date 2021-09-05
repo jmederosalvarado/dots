@@ -1,0 +1,127 @@
+#! /bin/bash
+
+PARAMS=""
+
+while [ "$#" -gt 0 ] ; do
+  case "$1" in
+    --dry-run) DRY_RUN=1 ; shift ;;
+    --silent) SILENT=1 ; shift ;;
+    --off) OFF=1 ; shift ;;
+
+    --all)
+      PIP=1
+      NUGET=1
+      NODE=1
+      shift
+      ;;
+
+    --pip) PIP=1 ; shift ;;
+    --nuget) NUGET=1 ; shift ;;
+    --node) NODE=1 ; shift ;;
+
+    -*|--*=)
+      echo "Error: Unsupported flag $1" >&2
+      exit 1
+      ;;
+
+    *) PARAMS="$PARAMS $1" ; shift ;;
+  esac
+done
+
+eval set -- "$PARAMS"
+
+
+# utils
+
+echo_run () { 
+  echo_cmd "$*"
+  run_cmd "$@"
+}
+
+echo_cmd () {
+  if [ -z "$SILENT" ] ; then
+    echo "--> $*" | tr -s " "
+  fi
+}
+
+run_cmd () {
+  if [ -z "$DRY_RUN" ] ; then
+    eval "$@"
+  fi
+}
+
+# script options
+
+shopt -s nullglob
+
+# dotnet
+
+add_nuget_cuba_source () {
+  echo_run "dotnet nuget add source http://nexus.prod.uci.cu/repository/nuget.org-proxy -n nuget.org-proxy &>/dev/null"
+  echo_run "dotnet nuget disable source nuget.org &>/dev/null"
+  echo_run "dotnet nuget enable source nuget.org-proxy &>/dev/null"
+}
+
+remove_nuget_cuba_source () {
+  echo_run "dotnet nuget remove source nuget.org-proxy &>/dev/null"
+  echo_run "dotnet nuget enable source nuget.org &>/dev/null"
+}
+
+if [ -n "$NUGET" ] ; then
+  if [ -n "$OFF" ] ; then
+    remove_nuget_cuba_source
+  else
+    add_nuget_cuba_source
+  fi
+fi
+
+
+# node
+
+set_npm_cuba_registry () {
+  echo_run "npm config set registry http://nexus.prod.uci.cu/repository/npm-proxy/"
+}
+
+remove_npm_cuba_registry () {
+  echo_run "npm config delete registry"
+}
+
+if [ -n "$NODE" ] ; then
+  if [ -n "$OFF" ] ; then
+    remove_npm_cuba_registry
+  else
+    set_npm_cuba_registry
+  fi
+fi
+
+# pip
+
+if command -v "pip" >/dev/null 2>&1 ; then
+  PIP_CMD="pip"
+elif command -v "python" >/dev/null 2>&1 ; then
+  PIP_CMD="python -m pip"
+else
+  PIP_CMD="python3 -m pip"
+fi
+
+set_pip_cuba_config () {
+  echo_run "$PIP_CMD config --user set global.index-url http://nexus.prod.uci.cu/repository/pypi-proxy/simple/ ${SILENT:+2>/dev/null}"
+  echo_run "$PIP_CMD config --user set global.trusted-host nexus.prod.uci.cu ${SILENT:+2>/dev/null}"
+  
+  # # this one doesn't appear to be free
+  # echo_run "$PIP_CMD config --user set global.index-url http://nexus.uclv.edu.cu/repository/pypi/simple/ ${SILENT:+2>/dev/null}"
+  # echo_run "$PIP_CMD config --user set global.trusted-host nexus.uclv.edu.cu ${SILENT:+2>/dev/null}"
+}
+
+unset_pip_cuba_config () {
+  echo_run "$PIP_CMD config --user unset global.index-url ${SILENT:+2>/dev/null}"
+  echo_run "$PIP_CMD config --user unset global.trusted-host ${SILENT:+2>/dev/null}"
+}
+
+if [ -n "$PIP" ] ; then
+  if [ -n "$OFF" ] ; then
+    unset_pip_cuba_config
+  else
+    set_pip_cuba_config
+  fi
+fi

@@ -1,0 +1,24 @@
+- name: Install required packages
+  package:
+    name: "{{ lookup('vars', ansible_facts['os_family'] | lower ~ '_packages') }}"
+    state: present
+  tags:
+    - install
+  vars:
+    archlinux_packages:
+      - zsh
+      - starship
+
+- name: Sync zsh files
+  synchronize:
+    src: "{{ item }}"
+    dest: "{{ home_dir }}/{{ item | basename }}"
+  loop:
+    - zsh/.zprofile
+    - zsh/.zshenv
+    - zsh/.zshrc
+
+- name: Sync starship config
+  synchronize:
+    src: starship.toml
+    dest: "{{ config_dir }}/starship.toml"

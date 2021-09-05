@@ -1,0 +1,24 @@
+{
+  "angular.experimental-ivy": true,
+  "coc.preferences.formatOnSaveFiletypes": [
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact",
+    "json",
+    "html",
+    "css",
+    "markdown"
+  ],
+  "diagnostic.enableHighlightLineNumber": false,
+  "diagnostic.errorSign": " ",
+  "diagnostic.hintSign": " ",
+  "diagnostic.infoSign": " ",
+  "diagnostic.virtualText": true,
+  "diagnostic.virtualTextCurrentLineOnly": false,
+  "diagnostic.virtualTextPrefix": "● ",
+  "diagnostic.warningSign": " ",
+  "npm.binPath": "/nix/store/3h7si3cs4n1yl357k7x2bp39g696nz3z-yarn-1.22.11/bin/yarn",
+  "suggest.enablePreview": true,
+  "suggest.triggerAfterInsertEnter": true
+}

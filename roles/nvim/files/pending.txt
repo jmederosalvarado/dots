@@ -1,0 +1,54 @@
+coc-nvim
+
+# lsp
+# nvim-lspconfig
+# lua-dev-nvim
+# null-ls-nvim
+# nvim-lsp-ts-utils
+
+# completion
+# nvim-compe
+# luasnip
+# friendly-snippets
+# nvim-autopairs
+
+# treesitter
+nvim-treesitter
+nvim-treesitter-textobjects
+playground
+
+# git
+vim-fugitive
+neogit
+gitsigns-nvim
+
+# telescope
+telescope-nvim
+
+# ui & ux
+ayu-vim
+lualine-nvim
+nvim-tree-lua
+todo-comments-nvim
+nvim-colorizer-lua
+neoscroll-nvim
+specs-nvim
+#indent-blankline-nvim
+zen-mode-nvim
+twilight-nvim
+
+# misc
+undotree
+# trouble-nvim
+toggleterm-nvim
+
+vim-vinegar
+vim-commentary
+vim-surround
+vim-repeat
+vim-eunuch
+vim-unimpaired
+vim-abolish
+vim-obsession
+
+lightspeed-nvim
