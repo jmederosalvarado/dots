@@ -1,13 +1,11 @@
 - name: Install required packages
   package:
-    name: "{{ lookup('vars', ansible_facts['os_family'] | lower ~ '_packages') }}"
+    name:
+      - zsh
+      - starship
     state: present
   tags:
     - install
-  vars:
-    archlinux_packages:
-      - zsh
-      - starship
 
 - name: Copy zsh files
   copy:

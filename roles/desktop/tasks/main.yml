@@ -1,24 +1,4 @@
-- name: Install required packages
-  package:
-    name: "{{ lookup('vars', ansible_facts['os_family'] | lower ~ '_packages') }}"
-    state: present
-  tags:
-    - install
-  vars:
-    archlinux_packages:
-      - sway
-      - swayidle
-      - swaylock-effects
-      - sway-launcher-desktop
-      - mako
-      - waybar
-      - slurp
-      - grim
-      - kitty
-      - mpv
-      - mpd
-      - mpc
-      - brightnessctl
+- import_tasks: "{{ lookup('vars', ansible_facts['os_family'] | lower) }}"
 
 - name: Copy sway related config
   copy:
