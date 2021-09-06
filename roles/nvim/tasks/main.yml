@@ -1,5 +1,6 @@
 - import_tasks: build.yml
   tags:
+    - build
     - install
   vars:
     nvim_commit: dce50312e1e9af81fb0e3b61d6e70bdf286fbffb
@@ -16,3 +17,5 @@
   loop:
     - lua
     - init.lua
+    - config
+    - coc-settings.json

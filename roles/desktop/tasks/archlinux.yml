@@ -1,19 +1,28 @@
 - name: Install packages from arch repos
   tags: 
     - install
-  package:
+  pacman:
     name:
       - sway
       - swayidle
-      - mako
       - waybar
-      - slurp
-      - grim
-      - kitty
+      - mako
       - mpv
       - mpd
       - mpc
+
+      # utilities
+      - grim
+      - slurp
       - brightnessctl
+      - pulseaudio
+      - libnotify
+      - wl-clipboard
+
+      # apps
+      - kitty
+      - chromium
+      - qutebrowser
 
       # fonts
       - ttc-iosevka
@@ -22,32 +31,10 @@
     state: present
   become: yes
 
-# This appears to be unnecessary
-#- name: Create the `aur_builder` user
-#user:
-#name: aur_builder
-#group: wheel
-#become: yes
-#
-#- name: Allow the `aur_builder` user to run `sudo pacman` without a password
-#lineinfile:
-#path: /etc/sudoers.d/11-install-aur_builder
-#line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
-#create: yes
-#state: present
-#validate: 'visudo -cf %s'
-#become: yes
-#
-#- name: Install `paru` using makepkg
-#aur:
-#name: paru
-#state: present
-#become: yes
-#become_user: aur_builder
-
 - name: Install aur packages
   aur:
     name:
       - swaylock-effects
       - sway-launcher-desktop
+      - grimshot
     state: present

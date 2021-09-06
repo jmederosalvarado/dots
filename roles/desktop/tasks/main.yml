@@ -1,5 +1,6 @@
-#- import_tasks: "{{ lookup('vars', ansible_facts['os_family'] | lower) }}.yml"
-- import_tasks: archlinux.yml
+- include_tasks: "{{ ansible_facts['os_family'] | lower }}.yml"
+  tags:
+    - install
 
 - name: Copy sway related config
   copy:
@@ -7,10 +8,16 @@
     dest: "{{ config_dir }}"
   loop:
     - sway
+    - swaylock
     - mako
     - waybar
 
 - name: Copy kitty config
   copy:
     src: kitty
+    dest: "{{ config_dir }}"
+
+- name: Copy chromium flags config
+  copy:
+    src: chromium-flags.conf
     dest: "{{ config_dir }}"

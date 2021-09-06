@@ -1,7 +1,7 @@
 [
   {
     "backlight": {
-      "format": "{icon}{percent}%",
+      "format": "{icon} {percent}%",
       "format-icons": [
         "",
         "",
@@ -11,7 +11,7 @@
       ]
     },
     "battery": {
-      "format": "{icon}{capacity}%",
+      "format": "{icon} {capacity}%",
       "format-icons": [
         "",
         "",
@@ -40,7 +40,7 @@
     },
     "layer": "top",
     "memory": {
-      "format": "{percentage}%"
+      "format": " {percentage}%"
     },
     "modules-center": [
       "sway/workspaces"
@@ -72,9 +72,9 @@
     },
     "position": "top",
     "pulseaudio": {
-      "format": "{icon}{volume}% {format_source}",
-      "format-bluetooth": "{icon}{volume}%  {format_source}",
-      "format-bluetooth-muted": "{icon}  {format_source}",
+      "format": "{icon} {volume}% {format_source}",
+      "format-bluetooth": "{icon} {volume}%  {format_source}",
+      "format-bluetooth-muted": "{icon} {format_source}",
       "format-icons": {
         "car": "",
         "default": [
@@ -100,8 +100,8 @@
     },
     "temperature": {
       "critical-threshold": 74,
-      "format": "{icon}{temperatureC}°C",
-      "format-critical": "{temperatureC}°C",
+      "format": "{icon} {temperatureC}°C",
+      "format-critical": " {temperatureC}°C",
       "format-icons": [
         "",
         "",

@@ -1,10 +1,4 @@
-- name: Install required packages
-  package:
-    name:
-      - git
-      - docker
-    state: present
-  become: yes
+- include_tasks: "{{ ansible_facts['os_family'] | lower }}.yml"
   tags:
     - install
 
