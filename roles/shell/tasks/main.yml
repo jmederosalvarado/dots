@@ -1,12 +1,16 @@
 - name: Install required packages
   package:
-    name:
-      - zsh
-      - starship
+    name: zsh
     state: present
   become: yes
   tags:
     - install
+
+- name: Ensure zplug is in place
+  git:
+    repo: "https://github.com/zplug/zplug"
+    dest: "{{ home_dir }}/.zplug"
+    update: no
 
 - name: Copy zsh files
   copy:

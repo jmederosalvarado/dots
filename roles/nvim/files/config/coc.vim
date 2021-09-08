@@ -1,4 +1,4 @@
-" NOTE: Checkout coc-cursors coc-dialog
+let g:coc_global_extensions = [ 'coc-snippets', 'coc-tsserver', 'coc-html', 'coc-css', 'coc-json', 'coc-prettier', 'coc-eslint', 'coc-tailwindcss', 'coc-vimlsp', 'coc-pyright' ]
 
 " Completion {{{
 

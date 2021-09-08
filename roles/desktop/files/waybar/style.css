@@ -1,5 +1,5 @@
 * {
-  font-family: Symbols Nerd Font, Iosevka;
+  font-family: Symbols Nerd Font, Fira Code;
   font-size: 10pt;
   border: none;
   border-radius: 3px;
@@ -51,13 +51,13 @@ tooltip label {
 #idle_inhibitor.activated {
   padding: 0 5px;
   background: #191e2a;
-  color: #ffcc66
+  color: #ffcc66;
 }
 
 #mode {
   background: #191e2a;
   border-bottom: 2px solid #ffcc66;
-  color: #ffcc66
+  color: #ffcc66;
 }
 
 #workspaces button {
@@ -86,10 +86,10 @@ tooltip label {
 }
 
 @keyframes blink {
-to {
-  background-color: #33415e;
-  color: #101521;
-}
+  to {
+    background-color: #33415e;
+    color: #101521;
+  }
 }
 
 #battery.warning:not(.charging) {

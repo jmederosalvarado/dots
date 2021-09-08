@@ -12,29 +12,29 @@
       - tree-sitter
       - curl
 
-- name: Create temp dir for nvim source
-  tempfile:
-    state: directory
-    prefix: neovim
-  register: nvim_src
-  become: yes
-
-- name: Download nvim source
-  unarchive:
-    src: "https://github.com/neovim/neovim/archive/{{ nvim_commit }}.tar.gz"
-    dest: "{{ nvim_src.path }}"
-    remote_src: yes
-  become: yes
+- name: Clone nvim
+  git:
+    repo: "https://github.com/neovim/neovim"
+    dest: "{{ src_dir }}/community/nvim"
+    depth: 1
 
 - name: Build nvim from source
   make:
-    chdir: "{{ nvim_src.path }}/neovim-{{ nvim_commit }}"
+    chdir: "{{ src_dir }}/community/nvim"
     params:
       CMAKE_BUILD_TYPE: Release
-  become: yes
 
-- name: Install nvim binary
+- name: Install nvim
   make:
     target: install
-    chdir: "{{ nvim_src.path }}/neovim-{{ nvim_commit }}"
+    chdir: "{{ src_dir }}/community/nvim"
   become: yes
+
+- name: Install nvim providers
+  package:
+    name: "{{ lookup('vars', ansible_facts['os_family'] | lower ~ '_packages') }}"
+    state: present
+  become: yes
+  vars:
+    archlinux_packages:
+      - python-pynvim

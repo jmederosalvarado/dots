@@ -9,6 +9,7 @@
   git:
     dest: "{{ data_dir }}/nvim/site/pack/packer/start/packer.nvim"
     repo: "https://github.com/wbthomason/packer.nvim"
+    update: no
 
 - name: Copy nvim config
   copy:

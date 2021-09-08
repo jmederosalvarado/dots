@@ -7,27 +7,34 @@
       - swayidle
       - waybar
       - mako
-      - mpv
       - mpd
-      - mpc
 
       # utilities
       - grim
       - slurp
       - brightnessctl
       - pulseaudio
+      - pulseaudio-alsa
+      - pulseaudio-jack
+      - pulseaudio-bluetooth
+      - udisks2
       - libnotify
       - wl-clipboard
 
       # apps
       - kitty
       - chromium
-      - qutebrowser
+      - imv
+      - mpv
+
+      # tui & cli
+      - mpc
+      - ranger
 
       # fonts
-      - ttc-iosevka
       - ttf-fira-code
       - ttf-nerd-fonts-symbols
+      - nerd-fonts-fira-code
     state: present
   become: yes
 

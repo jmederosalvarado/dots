@@ -2,6 +2,7 @@
   hosts: localhost
   vars:
     - home_dir: "{{ ansible_env.HOME }}"
+    - src_dir: "{{ ansible_env.HOME }}/src"
     - data_dir: "{{ ansible_env.HOME }}/.local/share"
     - config_dir: "{{ ansible_env.HOME }}/.config"
   pre_tasks:
@@ -10,6 +11,7 @@
         path: "{{ item }}"
         state: directory
       loop:
+      - "{{ src_dir }}"
       - "{{ data_dir }}"
       - "{{ config_dir }}"
   roles:

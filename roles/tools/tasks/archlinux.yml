@@ -3,6 +3,11 @@
     name:
       - git
       - docker
+      - docker-compose
+      - python
+      - nodejs
+      - npm
+      - yarn
       - github-cli
     state: present
   become: yes

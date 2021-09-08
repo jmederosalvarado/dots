@@ -11,7 +11,7 @@
       ]
     },
     "battery": {
-      "format": "{icon} {capacity}%",
+      "format": "<span weight=\"bold\">{icon} {capacity}%</span>",
       "format-icons": [
         "",
         "",
@@ -21,14 +21,14 @@
       ]
     },
     "clock": {
-      "format": " <span weight=\"bold\">{:%H:%M}</span>"
+      "format": "<span weight=\"bold\"> {:%H:%M}</span>"
     },
     "cpu": {
-      "format": "{usage}%",
+      "format": " {usage}%",
       "interval": "1"
     },
     "disk": {
-      "format": "{percentage_free}%"
+      "format": " {percentage_free}%"
     },
     "idle_inhibitor": {
       "format": "{icon}",
@@ -68,13 +68,13 @@
       "format-linked": " {ifname} (No IP)",
       "format-wifi": " {essid}",
       "tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n祝{bandwidthUpBits} {bandwidthDownBits}",
-      "tooltip-format-wifi": " {ifname}@{essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\n祝 {bandwidthUpBits}  {bandwidthDownBits}"
+      "tooltip-format-wifi": " {ifname}@{essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\n祝{bandwidthUpBits} {bandwidthDownBits}"
     },
     "position": "top",
     "pulseaudio": {
       "format": "{icon} {volume}% {format_source}",
-      "format-bluetooth": "{icon} {volume}%  {format_source}",
-      "format-bluetooth-muted": "{icon} {format_source}",
+      "format-bluetooth": "{icon} {volume}% {format_source}",
+      "format-bluetooth-muted": "{icon}  {format_source}",
       "format-icons": {
         "car": "",
         "default": [

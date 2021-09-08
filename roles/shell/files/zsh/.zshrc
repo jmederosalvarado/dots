@@ -1,18 +1,6 @@
-# TABLE OF CONTENTS {{{
-
-# OPTIONS
-# COMPLETIONS
-# KEYBINDINGS
-# HISTORY
-# PLUGINS
-# ALIASES
-# PATH
-
-# }}}
-
 # OPTIONS {{{
 
-# Changing/making/removing directory
+# Changing directories
 setopt auto_cd
 setopt auto_pushd
 setopt pushd_ignore_dups
@@ -23,13 +11,33 @@ setopt multios              # Allow multiple redirection streams
 
 # }}}
 
+# HISTORY {{{
+
+HISTFILE="$HOME/.zhistory" 
+HISTSIZE=50000
+SAVEHIST=10000
+
+setopt share_history          # share command history data
+setopt extended_history       # record timestamp of command in HISTFILE
+setopt hist_verify            # show command with history expansion to user before running it
+setopt hist_ignore_dups       # ignore duplicated commands history list
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+
+# Show history timestamps
+alias history='history -f' # timestamps follow mm/dd/yyyy
+# alias history='history -E' # timestamps follow dd.mm.yyyy
+# alias history='history -i' # timestamps follow yyyy-mm-dd
+
+# }}}
+
 # COMPLETIONS {{{
 
+# NOTE: Apparently compinit is already run by zplug
 # Load all stock functions (from $fpath files) called below.
-autoload -U compinit && compinit -d "$HOME/.zcompdump"
+# autoload -U compinit && compinit -d "$HOME/.zcompdump"
 
-# This settings are a simplification of settings at
-# https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/completion.zsh
+# Automatically load bash completion functions
+autoload -U +X bashcompinit && bashcompinit
 
 # fixme - the load process here seems a bit bizarre
 zmodload -i zsh/complist
@@ -48,8 +56,10 @@ zstyle ":completion:*" completer _complete _match _approximate
 zstyle ':completion:*:*:*:*:*' menu select
 
 # case insensitive (all), partial-word and substring completion
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' 'r:|=*' 'l:|=* r:|=*' # hyphen insensitive
-# zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*' # hyphen sensitive
+# hyphen insensitive
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' 'r:|=*' 'l:|=* r:|=*'
+# hyphen sensitive
+# zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 
 # Complete . and .. special directories
 zstyle ':completion:*' special-dirs true
@@ -57,184 +67,97 @@ zstyle ':completion:*' special-dirs true
 # disable named-directories autocompletion
 zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories
 
-# automatically expand ... to ../..
-# taken from zsh-lovers
-function rationalise_dot {
-  if [[ $LBUFFER = *.. ]]; then
-    LBUFFER+=/..
-  else
-    LBUFFER+=.
-  fi
-}
-zle -N rationalise_dot
-bindkey . rationalise_dot
-
 # use caching so that commands like apt and dpkg complete are usable
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path "$HOME/.zshcompdump"
-
-# automatically load bash completion functions
-autoload -U +X bashcompinit && bashcompinit
+zstyle ':completion:*' cache-path "$HOME/.zcompdump"
 
 # }}}
 
-# KEYBINDINGS {{{
+# # KEYBINDINGS {{{
 
-# Start typing + [key] - fuzzy find history backward {{{
+function hook_bindkeys {
+  autoload -U up-line-or-beginning-search && \
+    zle -N up-line-or-beginning-search
+  autoload -U down-line-or-beginning-search && \
+    zle -N down-line-or-beginning-search
 
-autoload -U up-line-or-beginning-search
-zle -N up-line-or-beginning-search
+  # keybindings are defined using zvm_bindkey to prevent
+  # conflicts with zsh-vi-mode plugin keybindings
+  function zvm_after_init {
+    # automatically expand ... to ../..
+    function rationalise_dot {
+      if [[ $LBUFFER = *.. ]]; then
+        LBUFFER+=/..
+      else
+        LBUFFER+=.
+      fi
+    }
+    zvm_define_widget rationalise_dot
+    zvm_bindkey viins "." rationalise_dot
 
-bindkey -M viins "^[[A" up-line-or-beginning-search
-bindkey -M vicmd "^[[A" up-line-or-beginning-search
-bindkey -M vicmd "k" up-line-or-beginning-search
+    # [Home] - Go to beginning of line
+    zvm_bindkey viins "$terminfo[khome]" beginning-of-line
+    # [End] - Go to end of line
+    zvm_bindkey viins "$terminfo[kend]"  end-of-line
 
-# }}}
+    # [Shift-Tab] - move through the completion menu backwards
+    zvm_bindkey viins "$terminfo[kcbt]" reverse-menu-complete
 
-# Start typing + [key] - fuzzy find history forward {{{
+    # [Delete] - delete forward
+    zvm_bindkey viins "^[[3~" delete-char
 
-autoload -U down-line-or-beginning-search
-zle -N down-line-or-beginning-search
+    # [Ctrl-Delete] - delete whole forward-word
+    zvm_bindkey viins '^[[3;5~' kill-word
 
-bindkey -M viins "^[[B" down-line-or-beginning-search
-bindkey -M vicmd "^[[B" down-line-or-beginning-search
-bindkey -M vicmd "j" down-line-or-beginning-search
+    # [Ctrl-RightArrow] - move forward one word
+    zvm_bindkey viins '^[[1;5C' forward-word
+    # [Ctrl-LeftArrow] - move backward one word
+    zvm_bindkey viins '^[[1;5D' backward-word
 
-# }}}
+    # [UpArrow] - Search history backwards
+    zvm_bindkey viins "$terminfo[kcuu1]" up-line-or-beginning-search
+    # [DownArrow] - Search history forward
+    zvm_bindkey viins "$terminfo[kcud1]" down-line-or-beginning-search
 
-# [Home] - Go to beginning of line
-if [[ -n "${terminfo[khome]}" ]]; then
-  bindkey -M viins "${terminfo[khome]}" beginning-of-line
-  bindkey -M vicmd "${terminfo[khome]}" beginning-of-line
-fi
-# [End] - Go to end of line
-if [[ -n "${terminfo[kend]}" ]]; then
-  bindkey -M viins "${terminfo[kend]}"  end-of-line
-  bindkey -M vicmd "${terminfo[kend]}"  end-of-line
-fi
+    zvm_bindkey viins '^P' up-line-or-beginning-search
+    zvm_bindkey viins '^N' down-line-or-beginning-search
+  }
 
-# [Shift-Tab] - move through the completion menu backwards
-if [[ -n "${terminfo[kcbt]}" ]]; then
-  bindkey -M viins "${terminfo[kcbt]}" reverse-menu-complete
-  bindkey -M vicmd "${terminfo[kcbt]}" reverse-menu-complete
-fi
+  function zvm_after_lazy_keybindings {
+    # [Home] - Go to beginning of line
+    zvm_bindkey vicmd "$terminfo[khome]" beginning-of-line
+    # [End] - Go to end of line
+    zvm_bindkey vicmd "$terminfo[kend]"  end-of-line
 
-# [Backspace] - delete backward
-bindkey -M viins '^?' backward-delete-char
-# [Delete] - delete forward
-if [[ -n "${terminfo[kdch1]}" ]]; then
-  bindkey -M viins "${terminfo[kdch1]}" delete-char
-else
-  bindkey -M viins "^[[3~" delete-char
-  bindkey -M viins "^[3;5~" delete-char
-fi
+    # [Shift-Tab] - move through the completion menu backwards
+    zvm_bindkey vicmd "$terminfo[kcbt]" reverse-menu-complete
 
-# [Ctrl-Delete] - delete whole forward-word
-bindkey -M viins '^[[3;5~' kill-word
+    # [Delete] - delete forward
+    zvm_bindkey vicmd "^[[3~" delete-char
 
-# [Ctrl-RightArrow] - move forward one word
-bindkey -M viins '^[[1;5C' forward-word
-bindkey -M vicmd '^[[1;5C' forward-word
-# [Ctrl-LeftArrow] - move backward one word
-bindkey -M viins '^[[1;5D' backward-word
-bindkey -M vicmd '^[[1;5D' backward-word
+    # [Ctrl-Delete] - delete whole forward-word
+    zvm_bindkey vicmd '^[[3;5~' kill-word
 
-# [Space] - don't do history expansion
-bindkey ' ' magic-space
+    # [Ctrl-RightArrow] - move forward one word
+    zvm_bindkey vicmd '^[[1;5C' forward-word
+    # [Ctrl-LeftArrow] - move backward one word
+    zvm_bindkey vicmd '^[[1;5D' backward-word
 
-# Setup vi-mode
+    # [UpArrow] - Search history backwards
+    zvm_bindkey vicmd "$terminfo[kcuu1]" up-line-or-beginning-search
+    # [DownArrow] - Search history forward
+    zvm_bindkey vicmd "$terminfo[kcud1]" down-line-or-beginning-search
 
-# Variable to track keymap mode
-typeset -g VI_KEYMAP=main
-
-# Control cursor style on mode change.
-function _vi-mode-set-cursor-shape-for-keymap() {
-  # return # uncomment to not change cursor style
-
-  # https://vt100.net/docs/vt510-rm/DECSCUSR
-  local _shape=0
-  case "${1:-${VI_KEYMAP:-main}}" in
-    main)    _shape=6 ;; # vi insert: line
-    viins)   _shape=6 ;; # vi insert: line
-    isearch) _shape=6 ;; # inc search: line
-    command) _shape=6 ;; # read a command name
-    vicmd)   _shape=2 ;; # vi cmd: block
-    visual)  _shape=2 ;; # vi visual mode: block
-    viopp)   _shape=0 ;; # vi operation pending: blinking block
-    *)       _shape=0 ;;
-  esac
-  printf $'\e[%d q' "${_shape}"
+    zvm_bindkey viins '^P' up-line-or-beginning-search
+    zvm_bindkey viins '^N' down-line-or-beginning-search
+    zvm_bindkey vicmd 'k' up-line-or-beginning-search
+    zvm_bindkey vicmd 'j' down-line-or-beginning-search
+  }
 }
-
-# Updates editor information when the keymap changes.
-function zle-keymap-select() {
-  # update keymap variable for the prompt
-  typeset -g VI_KEYMAP=$KEYMAP
-  _vi-mode-set-cursor-shape-for-keymap "${VI_KEYMAP}"
-}
-zle -N zle-keymap-select
-
-function zle-line-init() {
-  typeset -g VI_KEYMAP=main
-  (( ! ${+terminfo[smkx]} )) || echoti smkx
-  _vi-mode-set-cursor-shape-for-keymap "${VI_KEYMAP}"
-}
-zle -N zle-line-init
-
-function zle-line-finish() {
-  typeset -g VI_KEYMAP=main
-  (( ! ${+terminfo[rmkx]} )) || echoti rmkx
-  _vi-mode-set-cursor-shape-for-keymap default
-}
-zle -N zle-line-finish
-
-bindkey -v
-
-# allow vv to edit the command line (standard behaviour)
-autoload -Uz edit-command-line
-zle -N edit-command-line
-bindkey -M vicmd 'vv' edit-command-line
-
-# allow ctrl-p, ctrl-n for fuzzy seach
-bindkey '^P' up-line-or-beginning-search
-bindkey '^N' down-line-or-beginning-search
-
-# allow ctrl-r and ctrl-s to search the history
-bindkey '^r' history-incremental-search-backward
-bindkey '^s' history-incremental-search-forward
-
-# }}}
-
-# HISTORY {{{
-
-HISTFILE="$HOME/.zhistory" 
-HISTSIZE=50000
-SAVEHIST=10000
-
-setopt extended_history       # record timestamp of command in HISTFILE
-setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
-setopt hist_ignore_dups       # ignore duplicated commands history list
-setopt hist_ignore_space      # ignore commands that start with space
-setopt hist_verify            # show command with history expansion to user before running it
-setopt share_history          # share command history data
-
-# Show history timestamps
-alias history='history -f' # timestamps follow mm/dd/yyyy
-# alias history='history -E' # timestamps follow dd.mm.yyyy
-# alias history='history -i' # timestamps follow yyyy-mm-dd
-
-# }}}
-
-# PLUGINS {{{
-
-# Configure syntax-highlighting and autosuggestions
-#source_opt "$XDG_DATA_HOME/zsh/site/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-#source_opt "$XDG_DATA_HOME/zsh/site/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
-# }}}
 
 # ALIASES {{{
 
+alias ls='ls --color'
 alias l='ls -lah'
 alias ll='ls -lh'
 
@@ -247,4 +170,24 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # }}}
 
-eval "$(starship init zsh)"
+# ZPLUG {{{
+
+source ~/.zplug/init.zsh
+
+zplug 'zplug/zplug', \
+  hook-build:'zplug --self-manage'
+zplug 'zsh-users/zsh-completions'
+zplug 'zsh-users/zsh-autosuggestions'
+zplug 'zdharma/fast-syntax-highlighting'
+zplug 'jeffreytse/zsh-vi-mode', \
+  hook-load:hook_bindkeys
+zplug 'starship/starship', \
+  as:command, \
+  from:gh-r, \
+  use:'x86_64*linux*gnu*tar.gz$', \
+  hook-build:'tar -xf *.tar.gz', \
+  hook-load:'eval $(starship init zsh)'
+
+zplug load
+
+# }}}

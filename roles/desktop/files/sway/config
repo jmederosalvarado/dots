@@ -1,5 +1,5 @@
 ### Fonts
-font pango:Symbols Nerd Font, Iosevka 10.0
+font pango:Symbols Nerd Font, Fira Code 10.0
 
 ### Variables
 #
@@ -18,7 +18,7 @@ set $term kitty
 set $menu kitty --class=launcher -e env TERMINAL="kitty -e" sway-launcher-desktop
 
 ### Output configuration
-#output * bg ~/.local/share/backgrounds/background fill
+output * bg ~/.local/share/background fill
 # primary left - secondary right
 #output eDP-1 position 0 0 subpixel rgb
 #output DP-3 position 1920 0 subpixel rgb
@@ -34,7 +34,8 @@ exec swayidle -w \
          timeout 300 'swaylock -f --fade-in 0.5 --grace 2' \
          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
          before-sleep 'swaylock -f'
-bindsym $mod+F7 exec swaylock --fade-in 0.5 && killall -USR1 swayidle
+# bindsym $mod+F7 exec swaylock -f && sleep 1 && killall -USR1 swayidle
+bindsym $mod+F7 exec swaylock -f
 
 ### Input configuration
 input type:keyboard {
