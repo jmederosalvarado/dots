@@ -2,22 +2,32 @@
   tags:
     - install
 
-- name: Copy sway related config
-  copy:
-    src: "{{ item }}"
-    dest: "{{ config_dir }}"
+# - name: Ensure desktop related config dirs exist
+#   file:
+#     path: "{{ config_dir }}/{{ item }}"
+#     state: directory
+#   loop:
+#     - sway
+#     - swaylock
+#     - waybar
+#     - mako
+#     - kitty
+
+- name: Link desktop related config
+  file:
+    src: "{{ role_path }}/files/{{ item }}"
+    path: "{{ config_dir }}/{{ item }}"
+    state: link
+    force: yes
   loop:
     - sway
     - swaylock
     - mako
     - waybar
-
-- name: Copy kitty config
-  copy:
-    src: kitty
-    dest: "{{ config_dir }}"
+    - kitty
 
 - name: Copy chromium flags config
-  copy:
+  file:
     src: chromium-flags.conf
-    dest: "{{ config_dir }}"
+    path: "{{ config_dir }}/chromium-flags"
+    state: link

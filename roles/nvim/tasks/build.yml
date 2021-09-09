@@ -17,18 +17,23 @@
     repo: "https://github.com/neovim/neovim"
     dest: "{{ src_dir }}/community/nvim"
     depth: 1
+  register: nvim_clone
 
 - name: Build nvim from source
   make:
     chdir: "{{ src_dir }}/community/nvim"
     params:
       CMAKE_BUILD_TYPE: Release
+  become: yes
+  when: nvim_clone.changed
+  register: nvim_build
 
 - name: Install nvim
   make:
     target: install
     chdir: "{{ src_dir }}/community/nvim"
   become: yes
+  when: nvim_build.changed
 
 - name: Install nvim providers
   package:

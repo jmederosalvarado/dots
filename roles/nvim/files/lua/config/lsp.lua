@@ -2,6 +2,7 @@
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
 	virtual_text = { spacing = 4, prefix = "●" },
 	severity_sort = true,
+	update_in_insert = true,
 })
 
 local signs = { Error = "", Warning = "", Hint = "", Information = "" }
@@ -43,19 +44,12 @@ local default_on_attach = function(client, bufnr)
 	client.resolved_capabilities.document_formatting = false
 end
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities.textDocument.completion.completionItem.resolveSupport = {
-	properties = { "documentation", "detail", "additionalTextEdits" },
-}
-
 local server_setups = {}
 
 -- Default {{{
 
 server_setups["default"] = {
 	on_attach = default_on_attach,
-	capabilities = capabilities,
 }
 
 -- }}}
@@ -65,7 +59,6 @@ server_setups["default"] = {
 server_setups["lua"] = require("lua-dev").setup({
 	lspconfig = {
 		on_attach = default_on_attach,
-		capabilities = capabilities,
 	},
 })
 
@@ -83,7 +76,7 @@ server_setups["typescript"] = {
 		ts_utils.setup({
 			debug = false,
 			disable_commands = false,
-			enable_import_on_completion = false,
+			enable_import_on_completion = true,
 
 			-- import all
 			import_all_timeout = 5000, -- ms
@@ -101,7 +94,7 @@ server_setups["typescript"] = {
 			eslint_enable_disable_comments = true,
 			eslint_bin = "eslint",
 			eslint_config_fallback = nil,
-			eslint_enable_diagnostics = false,
+			eslint_enable_diagnostics = true,
 			eslint_show_rule_id = false,
 
 			-- formatting
@@ -110,22 +103,14 @@ server_setups["typescript"] = {
 			formatter_config_fallback = nil,
 
 			-- update imports on file move
-			update_imports_on_move = false,
-			require_confirmation_on_move = false,
+			update_imports_on_move = true,
+			require_confirmation_on_move = true,
 			watch_dir = nil,
 		})
 
 		-- required to fix code action ranges
 		ts_utils.setup_client(client)
-
-		-- no default maps, so you may want to define some here
-		-- local opts = {silent = true}
-		-- vim.api.nvim_buf_set_keymap(bufnr, "n", "gs", ":TSLspOrganize<CR>", opts)
-		-- vim.api.nvim_buf_set_keymap(bufnr, "n", "qq", ":TSLspFixCurrent<CR>", opts)
-		-- vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", ":TSLspRenameFile<CR>", opts)
-		-- vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", ":TSLspImportAll<CR>", opts)
 	end,
-	capabilities = capabilities,
 }
 
 -- }}}
@@ -138,8 +123,6 @@ server_setups["null-ls"] = function()
 		sources = {
 			null_ls.builtins.formatting.black,
 			null_ls.builtins.formatting.isort,
-			null_ls.builtins.formatting.eslint,
-			null_ls.builtins.formatting.prettier,
 			null_ls.builtins.formatting.stylua,
 		},
 	})
@@ -148,17 +131,18 @@ server_setups["null-ls"] = function()
 			default_on_attach(client, bufnr)
 			client.resolved_capabilities.document_formatting = true
 			vim.cmd("command! Format lua vim.lsp.buf.formatting_sync()")
-			-- vim.cmd 'autocmd BufWritePost <buffer> lua vim.lsp.buf.formatting_sync()'
+			vim.cmd("autocmd BufWritePost <buffer> lua vim.lsp.buf.formatting_sync()")
 		end,
-		capabilities = capabilities,
 	}
 end
 
 -- }}}
 
+local lspinstall = require("lspinstall")
+
 local setup_servers = function()
-	require("lspinstall").setup()
-	local servers = require("lspinstall").installed_servers()
+	lspinstall.setup()
+	local servers = lspinstall.installed_servers()
 	table.insert(servers, "null-ls")
 	for _, server in pairs(servers) do
 		local server_setup = server_setups[server] or server_setups["default"]

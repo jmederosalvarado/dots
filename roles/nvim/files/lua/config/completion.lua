@@ -1,79 +1,100 @@
-vim.o.completeopt = "menuone,noselect"
-
-require("compe").setup({
-	enabled = true,
-	autocomplete = true,
-	debug = false,
-	min_length = 1,
-	preselect = "enable",
-	throttle_time = 80,
-	source_timeout = 200,
-	resolve_timeout = 800,
-	incomplete_delay = 400,
-	max_abbr_width = 100,
-	max_kind_width = 100,
-	max_menu_width = 100,
-	documentation = true,
-
-	source = {
-		path = true,
-		buffer = true,
-		nvim_lsp = true,
-
-		luasnip = true,
-	},
-})
-
-require("luasnip.loaders.from_vscode").load()
-
-require("nvim-autopairs").setup({
-	check_ts = true,
-})
-require("nvim-autopairs.completion.compe").setup({
-	map_cr = true,
-	map_complete = true,
-})
+local cmp = require("cmp")
+local types = require("cmp.types")
+local luasnip = require("luasnip")
 
 local t = function(str)
 	return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
-local check_back_space = function()
-	local col = vim.fn.col(".") - 1
-	return col == 0 or vim.fn.getline("."):sub(col, col):match("%s") ~= nil
-end
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			luasnip.lsp_expand(args.body)
+		end,
+	},
 
--- Use (s-)tab to:
---- move to prev/next item in completion menuone
---- jump to prev/next snippet's placeholder
-_G.tab_complete = function()
-	if vim.fn.pumvisible() == 1 then
-		return t("<C-n>")
-	elseif require("luasnip").expand_or_jumpable() == 1 then
-		return t("<Plug>luasnip-expand-or-jump")
-	elseif check_back_space() then
-		return t("<Tab>")
-	else
-		return vim.fn["compe#complete"]()
-	end
-end
+	preselect = types.cmp.PreselectMode.Item,
 
-_G.s_tab_complete = function()
-	if vim.fn.pumvisible() == 1 then
-		return t("<C-p>")
-	elseif require("luasnip").jumpable(-1) == 1 then
-		return t("<Plug>luasnip-jump-prev")
-	else
-		-- If <S-Tab> is not working in your terminal, change it to <C-h>
-		return t("<S-Tab>")
-	end
-end
+	confirmation = {
+		default_behavior = types.cmp.ConfirmBehavior.Insert,
+		get_commit_characters = function(commit_characters)
+			return commit_characters
+		end,
+	},
 
-vim.api.nvim_set_keymap("i", "<C-Space>", [[compe#complete()]], { silent = true, expr = true, noremap = true })
--- vim.api.nvim_set_keymap('i', '<CR>', [[compe#confirm('<CR>')]],
---     { silent = true, expr = true, noremap = true })
-vim.api.nvim_set_keymap("i", "<C-e>", [[compe#close('<C-e>')]], { silent = true, expr = true, noremap = true })
-vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", { expr = true })
-vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", { expr = true })
-vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", { expr = true })
-vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", { expr = true })
+	event = {},
+
+	mapping = {
+		["<C-d>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-e>"] = cmp.mapping.close(),
+		["<CR>"] = cmp.mapping.confirm({
+			behavior = cmp.ConfirmBehavior.Replace,
+			select = true,
+		}),
+		["<Tab>"] = cmp.mapping(function(fallback)
+			if vim.fn.pumvisible() == 1 then
+				vim.fn.feedkeys(t("<C-n>"), "n")
+			elseif luasnip.expand_or_jumpable() then
+				vim.fn.feedkeys(t("<Plug>luasnip-expand-or-jump"), "")
+			else
+				fallback()
+			end
+		end, {
+			"i",
+			"s",
+		}),
+		["<S-Tab>"] = cmp.mapping(function(fallback)
+			if vim.fn.pumvisible() == 1 then
+				vim.fn.feedkeys(t("<C-p>"), "n")
+			elseif luasnip.jumpable(-1) then
+				vim.fn.feedkeys(t("<Plug>luasnip-jump-prev"), "")
+			else
+				fallback()
+			end
+		end, {
+			"i",
+			"s",
+		}),
+	},
+
+	formatting = {
+		deprecated = true,
+		format = function(entry, vim_item)
+			-- fancy icons and a name of kind
+			vim_item.kind = require("lspkind").presets.default[vim_item.kind] .. " " .. vim_item.kind
+
+			-- set a name for each source
+			vim_item.menu = ({
+				nvim_lsp = "[LSP]",
+				luasnip = "[LuaSnip]",
+				buffer = "[Buffer]",
+				path = "[Path]",
+				-- nvim_lua = "[Lua]",
+				-- latex_symbols = "[Latex]",
+			})[entry.source.name]
+			return vim_item
+		end,
+	},
+
+	experimental = {
+		ghost_text = true,
+	},
+
+	sources = {
+		{ name = "nvim_lsp" },
+		{ name = "luasnip" },
+		{ name = "buffer" },
+		{ name = "path" },
+	},
+})
+
+require("luasnip.loaders.from_vscode").lazy_load()
+
+require("nvim-autopairs").setup({ check_ts = true })
+require("nvim-autopairs.completion.cmp").setup({
+	map_cr = true, --  map <CR> on insert mode
+	map_complete = true, -- it will auto insert `(` after select function or method item
+	auto_select = true, -- automatically select the first item
+})

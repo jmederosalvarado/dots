@@ -12,16 +12,25 @@
     dest: "{{ home_dir }}/.zplug"
     update: no
 
-- name: Copy zsh files
-  copy:
-    src: "{{ item }}"
-    dest: "{{ home_dir }}/{{ item | basename }}"
+- name: Link zsh files
+  file:
+    src: "{{ role_path }}/files/{{ item }}"
+    path: "{{ home_dir }}/{{ item | basename }}"
+    state: link
+    force: yes
   loop:
     - zsh/.zprofile
     - zsh/.zshenv
     - zsh/.zshrc
 
-- name: Copy starship config
-  copy:
-    src: starship.toml
-    dest: "{{ config_dir }}/starship.toml"
+- name: Ensure config dir exits
+  file:
+    path: "{{ config_dir }}"
+    state: directory
+
+- name: Link starship config
+  file:
+    src: "{{ role_path }}/files/starship.toml"
+    path: "{{ config_dir }}/starship.toml"
+    state: link
+    force: yes

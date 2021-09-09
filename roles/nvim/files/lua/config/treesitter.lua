@@ -2,8 +2,9 @@ require("nvim-treesitter.configs").setup({
 	ensure_installed = "maintained",
 	highlight = { enable = true },
 	incremental_selection = { enable = true },
-	indent = { enable = true },
+	indent = { enable = true, disable = { "python", "yaml" } },
 	autopairs = { enable = true },
+	autotag = { enable = true },
 	matchup = { enable = true },
 
 	playground = {

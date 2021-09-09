@@ -2,7 +2,7 @@
 
 vim.o.background = "dark"
 
-vim.g.tokyonight_style = "night"
+-- vim.g.tokyonight_style = "night" -- strom is the default
 vim.g.tokyonight_colors = { bg_dark = "#16161e" }
 
 vim.cmd("colorscheme tokyonight")

@@ -1,6 +1,8 @@
+# @@managed by ansible@@
 [user]
 	email = "jmederosalvarado@gmail.com"
 	name = "Jorge Mederos Alvarado"
+# @@managed by ansible@@
 
 [init]
 	defaultBranch = "main"
@@ -12,4 +14,3 @@
 
 [credential "https://gitlab.com"]
 	helper = "!/bin/glab auth git-credential"
-

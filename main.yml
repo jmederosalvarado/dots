@@ -5,15 +5,6 @@
     - src_dir: "{{ ansible_env.HOME }}/src"
     - data_dir: "{{ ansible_env.HOME }}/.local/share"
     - config_dir: "{{ ansible_env.HOME }}/.config"
-  pre_tasks:
-    - name: Ensure user config and data dir exist
-      file:
-        path: "{{ item }}"
-        state: directory
-      loop:
-      - "{{ src_dir }}"
-      - "{{ data_dir }}"
-      - "{{ config_dir }}"
   roles:
     - { role: shell, tags: ['shell'] }
     - { role: nvim, tags: ['nvim'] }

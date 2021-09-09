@@ -2,8 +2,6 @@
   tags:
     - build
     - install
-  vars:
-    nvim_commit: dce50312e1e9af81fb0e3b61d6e70bdf286fbffb
 
 - name: Ensure Packer is in place
   git:
@@ -11,10 +9,17 @@
     repo: "https://github.com/wbthomason/packer.nvim"
     update: no
 
-- name: Copy nvim config
-  copy:
-    src: "{{ item }}"
-    dest: "{{ config_dir }}/nvim"
+- name: Ensure nvim config dir exits
+  file:
+    path: "{{ config_dir }}/nvim"
+    state: directory
+
+- name: Link nvim config
+  file:
+    src: "{{ role_path }}/files/{{ item }}"
+    path: "{{ config_dir }}/nvim/{{ item }}"
+    state: link
+    force: yes
   loop:
     - lua
     - init.lua

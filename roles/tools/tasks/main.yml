@@ -2,7 +2,18 @@
   tags:
     - install
 
-- name: Copy git config
-  copy:
-    src: git
-    dest: "{{ config_dir }}"
+- name: Ensure git config dir exists
+  file:
+    path: "{{ config_dir }}/git"
+    state: directory
+
+- name: Ensure user name and email in git config
+  blockinfile:
+    path: "{{ config_dir }}/git/config"
+    marker_end: "end"
+    marker_begin: "begin"
+    marker: "# @@managed by ansible - {mark}@@"
+    block: |
+      [user]
+      	email = "jmederosalvarado@gmail.com"
+      	name = "Jorge Mederos Alvarado"
