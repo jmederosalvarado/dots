@@ -7,7 +7,6 @@
       - swayidle
       - waybar
       - mako
-      - mpd
 
       # utilities
       - grim
@@ -28,13 +27,16 @@
       - mpv
 
       # tui & cli
+      - mpd
       - mpc
       - ranger
 
       # fonts
+      - ttc-iosevka
       - ttf-fira-code
       - ttf-nerd-fonts-symbols
       - nerd-fonts-fira-code
+      - nerd-fonts-iosevka
     state: present
   become: yes
 

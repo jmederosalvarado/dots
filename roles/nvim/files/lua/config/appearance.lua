@@ -3,7 +3,7 @@
 vim.o.background = "dark"
 
 -- vim.g.tokyonight_style = "night" -- strom is the default
-vim.g.tokyonight_colors = { bg_dark = "#16161e" }
+-- vim.g.tokyonight_colors = { bg_dark = "#16161e" }
 
 vim.cmd("colorscheme tokyonight")
 
@@ -46,7 +46,7 @@ require("lualine").setup({
 
 -- vim.g.nvim_tree_width = 50;
 vim.g.nvim_tree_follow = 1
-vim.g.nvim_tree_lsp_diagnostics = 1
+-- vim.g.nvim_tree_lsp_diagnostics = 1
 -- vim.g.nvim_tree_quit_on_open = 1;
 -- vim.g.nvim_tree_auto_open = 1;
 -- vim.g.nvim_tree_auto_close = 1;

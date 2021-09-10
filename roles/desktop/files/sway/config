@@ -1,5 +1,5 @@
 ### Fonts
-font pango:Symbols Nerd Font, Fira Code 10.0
+font pango:Symbols Nerd Font, Iosevka 10.0
 
 ### Variables
 #
@@ -196,9 +196,9 @@ bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
 # bindsym XF86MonBrightnessUp exec light -A 5
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 bindsym XF86MonBrightnessUp exec brightnessctl set +5%
-#bindsym XF86AudioPlay exec playerctl play-pause
-#bindsym XF86AudioNext exec playerctl next
-#bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioPlay exec mpc toggle
+bindsym XF86AudioNext exec mpc next
+bindsym XF86AudioPrev exec mpc prev
 #bindsym XF86Search exec bemenu-run -i
 #
 # Screenshots

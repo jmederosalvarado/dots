@@ -9,10 +9,12 @@
       - npm
       - yarn
       - github-cli
+      - tmux
     state: present
   become: yes
 
 - name: Install required packages from aur
   aur:
+    use: paru
     name:
       - gitlab-glab-bin

@@ -145,6 +145,23 @@ local plugins = function(use)
 
 	-- misc {{{
 
+	use({
+		"folke/persistence.nvim",
+		config = function()
+			require("persistence").setup()
+			vim.cmd('command! SessionLoad  lua require("persistence").load()')
+			vim.cmd('command! SessionLast  lua require("persistence").load({ last = true })')
+			vim.cmd('command! SessionStop  lua require("persistence").stop()')
+			vim.cmd('command! SessionStart lua require("persistence").start()')
+			vim.cmd([[
+        augroup PersistenceAuto
+          autocmd!
+          autocmd VimEnter * nested lua require("persistence").load()
+        augroup end
+      ]])
+		end,
+	})
+
 	use("tpope/vim-vinegar")
 	use("tpope/vim-commentary")
 	use("tpope/vim-surround")
@@ -154,9 +171,10 @@ local plugins = function(use)
 	use("tpope/vim-abolish")
 	use("tpope/vim-obsession")
 	use("ggandor/lightspeed.nvim")
-	use("folke/persistence.nvim")
 	use("andymass/vim-matchup")
 	-- use 'romgrk/barbar.nvim'
+
+	use("tjdevries/astronauta.nvim")
 
 	-- }}}
 end
