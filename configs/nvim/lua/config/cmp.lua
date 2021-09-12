@@ -90,7 +90,8 @@ cmp.setup({
 	},
 })
 
-require("luasnip.loaders.from_vscode").lazy_load()
+-- FIXME: luasnip/loaders/from_vscode.lua:121: attempt to call global 'filter_list' (a nil value)
+-- require("luasnip.loaders.from_vscode").lazy_load()
 
 require("nvim-autopairs").setup({ check_ts = true })
 require("nvim-autopairs.completion.cmp").setup({
