@@ -35,14 +35,14 @@
       - ttc-iosevka
       - ttf-fira-code
       - ttf-nerd-fonts-symbols
-      - nerd-fonts-fira-code
-      - nerd-fonts-iosevka
     state: present
   become: yes
 
 - name: Install aur packages
   aur:
     name:
+      - nerd-fonts-fira-code
+      - nerd-fonts-iosevka
       - swaylock-effects
       - sway-launcher-desktop
       - grimshot
