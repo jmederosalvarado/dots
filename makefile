@@ -30,7 +30,7 @@ sway_configs = $(CONFIG_HOME)/sway $(CONFIG_HOME)/mako \
 # Rules:
 sway: $(sway_configs) | $(sway_pkgs)
 
-$(sway_configs): $(CONFIG_HOME)
+$(sway_configs): | $(CONFIG_HOME)
 	ln -s $(PWD)/configs/sway/$(notdir $@) $@
 
 # Clean
@@ -43,7 +43,7 @@ sway_clean: | $(sway_pkgs:.pkg=.upkg)
 
 kitty: $(CONFIG_HOME)/kitty | kitty.pkg
 
-$(CONFIG_HOME)/kitty:
+$(CONFIG_HOME)/kitty: | $(CONFIG_HOME)
 	ln -s $(PWD)/configs/kitty $@
 
 #Clean
@@ -68,7 +68,7 @@ $(zsh_configs):
 
 starship: $(CONFIG_HOME)/starship.toml | starship.pkg
 
-$(CONFIG_HOME)/starship.toml: $(CONFIG_HOME)
+$(CONFIG_HOME)/starship.toml: | $(CONFIG_HOME)
 	ln -s $(PWD)/configs/zsh/starship.toml $@
 
 # Clean
@@ -100,7 +100,7 @@ $(nvim_source): | git.pkg
 $(CONFIG_HOME)/nvim:
 	mkdir -p $@
 
-$(nvim_configs): $(CONFIG_HOME)/nvim
+$(nvim_configs): | $(CONFIG_HOME)/nvim
 	ln -s $(PWD)/configs/nvim/$(notdir $@) $@
 
 $(nvim_packer): | git.pkg
@@ -123,7 +123,7 @@ tools_configs = $(CONFIG_HOME)/ranger
 
 tools: $(tools_configs) | $(tools_pkgs)
 
-$(tools_configs):
+$(tools_configs): | $(CONFIG_HOME)
 	ln -s $(PWD)/configs/tools/$(notdir $@) $@
 
 tools_clean: | $(tools_pkgs:.pkg=.upkg)
