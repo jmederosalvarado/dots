@@ -3,8 +3,8 @@ BIN_HOME := $(HOME)/.local/bin
 DATA_HOME := $(HOME)/.local/share
 CONFIG_HOME := $(HOME)/.config
 
-all: sway zsh nvim tools
-clean: sway_clean zsh_clean nvim_clean tools_clean
+all: sway kitty zsh nvim tools
+clean: sway_clean kitty_clean nvim_clean tools_clean
 
 # Useful vars {{{
 
@@ -40,13 +40,26 @@ sway_clean: | $(sway_pkgs:.pkg=.upkg)
 
 # }}}
 
+# Kitty {{{
+
+kitty: $(CONFIG_HOME)/kitty | kitty.pkg
+
+$(CONFIG_HOME)/kitty:
+	ln -s $(PWD)/configs/kitty $@
+
+#Clean
+kitty_clean: | kitty.upkg
+	rm -f $(CONFIG_HOME)/kitty
+
+# }}}
+
 # ZSH {{{
 
 zsh_pkgs = zsh.pkg
 zsh_zplug = $(HOME)/.zplug
 zsh_configs = $(HOME)/.zshrc $(HOME)/.zshenv $(HOME)/.zprofile
 
-zsh: $(zsh_configs) $(CONFIG_HOME)/starship.toml | $(zsh_pkgs)
+zsh: $(zsh_configs) $(zsh_zplug) starship | $(zsh_pkgs)
 
 $(zsh_zplug): | git.pkg
 	git clone https://github.com/zplug/zplug $@
@@ -54,6 +67,8 @@ $(zsh_zplug): | git.pkg
 $(zsh_configs):
 	mkdir -p $(dir $@)
 	ln -s $(PWD)/configs/zsh/$(notdir $@) $@
+
+starship: $(CONFIG_HOME)/starship.toml | starship.pkg
 
 $(CONFIG_HOME)/starship.toml:
 	mkdir -p $(dir $@)
@@ -72,11 +87,11 @@ zsh_clean: | $(zsh_pkgs:.pkg=.upkg)
 nvim_configs = $(CONFIG_HOME)/nvim/init.lua $(CONFIG_HOME)/nvim/lua
 nvim_packer = $(DATA_HOME)/nvim/site/pack/packer/start/packer.nvim
 nvim_source = cache/nvim
-nvim_build_deps = base-devel.pkg cmake.pkg unzip.pkg ninja.pkg tree-sitter.pkg curl.pkg
+nvim_build_deps = cmake.pkg unzip.pkg ninja.pkg tree-sitter.pkg curl.pkg
 nvim_bin = /usr/local/bin/nvim
 
 # Rules
-nvim: $(nvim_bin) $(nvim_configs)
+nvim: $(nvim_bin) $(nvim_configs) $(nvim_packer)
 
 $(nvim_bin): $(nvim_source) | $(nvim_build_deps)
 	$(MAKE) --directory $(nvim_source) CMAKE_BUILD_TYPE=Release
@@ -94,9 +109,10 @@ $(nvim_packer): | git.pkg
 
 # Clean
 nvim_clean: | $(nvim_build_deps:.pkg=.upkg)
-	rm -rf $(nvim_source) $(nvim_packer)
+	rm -rf $(nvim_packer)
 	rm -f $(nvim_configs)
-	sudo rm -f $(nvim_bin)
+	# rm -rf $(nvim_source)
+	# sudo rm -f $(nvim_bin)
 
 # }}}
 
@@ -129,6 +145,6 @@ scripts_clean:
 	paru -Qi $* &>/dev/null || paru -S --needed $*
 
 %.upkg:
-	paru -Qi $* &>/dev/null && paru -R $*
+	# paru -Qi $* &>/dev/null && paru -R $*
 
 # }}}

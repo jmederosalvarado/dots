@@ -181,13 +181,9 @@ zplug 'zsh-users/zsh-autosuggestions'
 zplug 'zdharma/fast-syntax-highlighting'
 zplug 'jeffreytse/zsh-vi-mode', \
   hook-load:hook_bindkeys
-zplug 'starship/starship', \
-  as:command, \
-  from:gh-r, \
-  use:'x86_64*linux*gnu*tar.gz$', \
-  hook-build:'tar -xf *.tar.gz', \
-  hook-load:'eval $(starship init zsh)'
 
 zplug load
 
 # }}}
+
+eval $(starship init zsh)
