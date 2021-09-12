@@ -127,6 +127,7 @@ $(tools_configs):
 	ln -s $(PWD)/configs/tools/$(notdir $@) $@
 
 tools_clean: | $(tools_pkgs:.pkg=.upkg)
+	rm -f $(tools_configs)
 
 # }}}
 
