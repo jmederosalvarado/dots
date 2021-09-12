@@ -156,7 +156,6 @@ local plugins = function(use)
 		end,
 	})
 
-	use("tpope/vim-vinegar")
 	use("tpope/vim-commentary")
 	use("tpope/vim-surround")
 	use("tpope/vim-repeat")
@@ -166,7 +165,7 @@ local plugins = function(use)
 	use("tpope/vim-obsession")
 	use("ggandor/lightspeed.nvim")
 	use("andymass/vim-matchup")
-	-- use 'romgrk/barbar.nvim'
+	use("tjdevries/astronauta.nvim")
 
 	-- }}}
 end

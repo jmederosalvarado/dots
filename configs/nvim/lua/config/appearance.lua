@@ -46,14 +46,14 @@ require("lualine").setup({
 -- NVIM-TREE {{{
 
 -- vim.g.nvim_tree_width = 50;
-vim.g.nvim_tree_follow = 1
+-- vim.g.nvim_tree_follow = 1
 -- vim.g.nvim_tree_lsp_diagnostics = 1
 -- vim.g.nvim_tree_quit_on_open = 1;
 -- vim.g.nvim_tree_auto_open = 1;
 -- vim.g.nvim_tree_auto_close = 1;
 
 vim.cmd("nnoremap <C-n> :NvimTreeToggle<CR>")
--- vim.cmd 'nnoremap - :NvimTreeFindFile<CR>'
+vim.cmd("nnoremap - :NvimTreeFindFile<CR>")
 
 vim.g.nvim_tree_show_icons = {
 	git = 1,
