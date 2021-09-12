@@ -30,8 +30,7 @@ sway_configs = $(CONFIG_HOME)/sway $(CONFIG_HOME)/mako \
 # Rules:
 sway: $(sway_configs) | $(sway_pkgs)
 
-$(sway_configs):
-	mkdir -p $(dir $@)
+$(sway_configs): $(CONFIG_HOME)
 	ln -s $(PWD)/configs/sway/$(notdir $@) $@
 
 # Clean
@@ -65,13 +64,11 @@ $(zsh_zplug): | git.pkg
 	git clone https://github.com/zplug/zplug $@
 
 $(zsh_configs):
-	mkdir -p $(dir $@)
 	ln -s $(PWD)/configs/zsh/$(notdir $@) $@
 
 starship: $(CONFIG_HOME)/starship.toml | starship.pkg
 
-$(CONFIG_HOME)/starship.toml:
-	mkdir -p $(dir $@)
+$(CONFIG_HOME)/starship.toml: $(CONFIG_HOME)
 	ln -s $(PWD)/configs/zsh/starship.toml $@
 
 # Clean
@@ -100,8 +97,10 @@ $(nvim_bin): $(nvim_source) | $(nvim_build_deps)
 $(nvim_source): | git.pkg
 	git clone --depth 1 https://github.com/neovim/neovim $@
 
-$(nvim_configs):
-	mkdir -p $(CONFIG_HOME)/nvim
+$(CONFIG_HOME)/nvim:
+	mkdir -p $@
+
+$(nvim_configs): $(CONFIG_HOME)/nvim
 	ln -s $(PWD)/configs/nvim/$(notdir $@) $@
 
 $(nvim_packer): | git.pkg
@@ -120,8 +119,12 @@ nvim_clean: | $(nvim_build_deps:.pkg=.upkg)
 
 tools_pkgs = git.pkg github-cli.pkg gitlab-glab-bin.pkg \
 						 docker.pkg docker-compose.pkg tmux.pkg ranger.pkg
+tools_configs = $(CONFIG_HOME)/ranger
 
-tools: | $(tools_pkgs)
+tools: $(tools_configs) | $(tools_pkgs)
+
+$(tools_configs):
+	ln -s $(PWD)/configs/tools/$(notdir $@) $@
 
 tools_clean: | $(tools_pkgs:.pkg=.upkg)
 
@@ -130,8 +133,7 @@ tools_clean: | $(tools_pkgs:.pkg=.upkg)
 # Scripts {{{
 
 # TODO
-scripts:
-	mkdir -p $(dir $@)
+scripts: $(BIN_HOME)
 	ln -s $(PWD)/scripts/$(notdir $@) $@
 
 scripts_clean:
@@ -140,6 +142,9 @@ scripts_clean:
 # }}}
 
 # Utils {{{
+
+$(CONFIG_HOME) $(DATA_HOME) $(BIN_HOME):
+	mkdir -p $@
 
 %.pkg:
 	paru -Qi $* &>/dev/null || paru -S --needed $*
