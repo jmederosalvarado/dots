@@ -1,5 +1,3 @@
-let g:coc_global_extensions = [ 'coc-snippets', 'coc-tsserver', 'coc-html', 'coc-css', 'coc-json', 'coc-prettier', 'coc-eslint', 'coc-tailwindcss', 'coc-vimlsp', 'coc-pyright' ]
-
 " Completion {{{
 
 " Use tab for trigger completion with characters ahead and navigate.
@@ -66,14 +64,6 @@ nmap <leader>rn <Plug>(coc-rename)
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
-
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
 
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph

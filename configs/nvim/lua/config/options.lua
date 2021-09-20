@@ -22,7 +22,7 @@ vim.o.hlsearch = false -- don't highlight search
 vim.o.hidden = true -- enable modified buffers in background
 
 vim.o.list = true -- show some invisible characters (tabs...
-vim.o.listchars = "space:·,tab: "
+vim.o.listchars = "trail:·,tab: "
 vim.o.showbreak = "↪ "
 
 vim.o.mouse = "a" -- enable mouse mode

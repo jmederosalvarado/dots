@@ -2,8 +2,9 @@
 
 vim.o.background = "dark"
 
--- vim.g.tokyonight_style = "night" -- strom is the default
+-- vim.g.tokyonight_style = "night" -- storm is the default
 -- vim.g.tokyonight_colors = { bg_dark = "#16161e" }
+-- vim.g.tokyonight_transparent_sidebar = true
 vim.g.tokyonight_lualine_bold = true
 
 vim.cmd("colorscheme tokyonight")
@@ -51,6 +52,7 @@ require("lualine").setup({
 -- vim.g.nvim_tree_quit_on_open = 1;
 -- vim.g.nvim_tree_auto_open = 1;
 -- vim.g.nvim_tree_auto_close = 1;
+vim.g.nvim_tree_ignore = { '.git', 'node_modules' }
 
 vim.cmd("nnoremap <C-n> :NvimTreeToggle<CR>")
 vim.cmd("nnoremap - :NvimTreeFindFile<CR>")

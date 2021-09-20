@@ -98,6 +98,8 @@
       "format": "<span style=\"italic\">{}</span>",
       "tooltip": false
     },
+    /* "mpd": { */
+    /* }, */
     "temperature": {
       "critical-threshold": 74,
       "format": "{icon} {temperatureC}°C",

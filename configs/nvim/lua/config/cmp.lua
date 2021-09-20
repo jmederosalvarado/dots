@@ -1,19 +1,26 @@
 local cmp = require("cmp")
 local types = require("cmp.types")
-local luasnip = require("luasnip")
 
-local t = function(str)
-	return vim.api.nvim_replace_termcodes(str, true, true, true)
+local has_words_before = function()
+	if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
+		return false
+	end
+	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
+local feedkeys = function(key, mode)
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
 end
 
 cmp.setup({
 	snippet = {
 		expand = function(args)
-			luasnip.lsp_expand(args.body)
+			vim.fn["vsnip#anonymous"](args.body)
 		end,
 	},
 
-	preselect = types.cmp.PreselectMode.Item,
+	preselect = types.cmp.PreselectMode.None,
 
 	confirmation = {
 		default_behavior = types.cmp.ConfirmBehavior.Insert,
@@ -31,13 +38,15 @@ cmp.setup({
 		["<C-e>"] = cmp.mapping.close(),
 		["<CR>"] = cmp.mapping.confirm({
 			behavior = cmp.ConfirmBehavior.Replace,
-			select = true,
+			select = false,
 		}),
 		["<Tab>"] = cmp.mapping(function(fallback)
 			if vim.fn.pumvisible() == 1 then
-				vim.fn.feedkeys(t("<C-n>"), "n")
-			elseif luasnip.expand_or_jumpable() then
-				vim.fn.feedkeys(t("<Plug>luasnip-expand-or-jump"), "")
+				feedkeys("<C-n>", "n")
+			elseif vim.fn["vsnip#available"]() == 1 then
+				feedkeys("<Plug>(vsnip-expand-or-jump)", "")
+			elseif has_words_before() then
+				cmp.complete()
 			else
 				fallback()
 			end
@@ -47,9 +56,9 @@ cmp.setup({
 		}),
 		["<S-Tab>"] = cmp.mapping(function(fallback)
 			if vim.fn.pumvisible() == 1 then
-				vim.fn.feedkeys(t("<C-p>"), "n")
-			elseif luasnip.jumpable(-1) then
-				vim.fn.feedkeys(t("<Plug>luasnip-jump-prev"), "")
+				feedkeys("<C-p>", "n")
+			elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+				feedkeys("<Plug>(vsnip-jump-prev)", "")
 			else
 				fallback()
 			end
@@ -62,13 +71,13 @@ cmp.setup({
 	formatting = {
 		deprecated = true,
 		format = function(entry, vim_item)
-			-- fancy icons and a name of kind
-			vim_item.kind = require("lspkind").presets.default[vim_item.kind] .. " " .. vim_item.kind
+			-- -- fancy icons and a name of kind
+			-- vim_item.kind = require("lspkind").presets.default[vim_item.kind] .. " " .. vim_item.kind
 
 			-- set a name for each source
 			vim_item.menu = ({
 				nvim_lsp = "[LSP]",
-				luasnip = "[LuaSnip]",
+				vsnip = "[Snippet]",
 				buffer = "[Buffer]",
 				path = "[Path]",
 				-- nvim_lua = "[Lua]",
@@ -79,19 +88,16 @@ cmp.setup({
 	},
 
 	experimental = {
-		ghost_text = true,
+		-- ghost_text = true,
 	},
 
 	sources = {
 		{ name = "nvim_lsp" },
-		{ name = "luasnip" },
+		{ name = "vsnip" },
 		{ name = "buffer" },
 		{ name = "path" },
 	},
 })
-
--- FIXME: luasnip/loaders/from_vscode.lua:121: attempt to call global 'filter_list' (a nil value)
--- require("luasnip.loaders.from_vscode").lazy_load()
 
 require("nvim-autopairs").setup({ check_ts = true })
 require("nvim-autopairs.completion.cmp").setup({

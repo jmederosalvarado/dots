@@ -81,14 +81,15 @@ zsh_clean: | $(zsh_pkgs:.pkg=.upkg)
 # Neovim {{{
 
 # Vars:
-nvim_configs = $(CONFIG_HOME)/nvim/init.lua $(CONFIG_HOME)/nvim/lua
+nvim_configs = $(CONFIG_HOME)/nvim/init.lua $(CONFIG_HOME)/nvim/lua $(CONFIG_HOME)/nvim/config $(CONFIG_HOME)/nvim/coc-settings.json
 nvim_packer = $(DATA_HOME)/nvim/site/pack/packer/start/packer.nvim
+nvim_plug = $(DATA_HOME)/nvim/site/autoload/plug.vim
 nvim_source = cache/nvim
 nvim_build_deps = cmake.pkg unzip.pkg ninja.pkg tree-sitter.pkg curl.pkg
 nvim_bin = /usr/local/bin/nvim
 
 # Rules
-nvim: $(nvim_bin) $(nvim_configs) $(nvim_packer)
+nvim: $(nvim_bin) $(nvim_configs) $(nvim_packer) $(nvim_plug)
 
 $(nvim_bin): $(nvim_source) | $(nvim_build_deps)
 	$(MAKE) --directory $(nvim_source) CMAKE_BUILD_TYPE=Release
@@ -105,6 +106,9 @@ $(nvim_configs): | $(CONFIG_HOME)/nvim
 
 $(nvim_packer): | git.pkg
 	git clone --depth 1 https://github.com/wbthomason/packer.nvim $@
+
+$(nvim_plug): | curl.pkg
+	curl -fLo $@ --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 # Clean
 nvim_clean: | $(nvim_build_deps:.pkg=.upkg)

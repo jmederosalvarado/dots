@@ -1,3 +1,5 @@
+require("astronauta.keymap")
+
 -- Appearance
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
 	virtual_text = { spacing = 4, prefix = "●" },
@@ -13,35 +15,29 @@ for type, icon in pairs(signs) do
 end
 
 local default_on_attach = function(client, bufnr)
-	local function buf_set_keymap(...)
-		vim.api.nvim_buf_set_keymap(bufnr, ...)
-	end
-
-	local opts = { noremap = true, silent = true }
+	local opts = { buffer = bufnr, silent = true }
 
 	-- See `:help vim.lsp.*` for documentation on any of the below functions
-	buf_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-	buf_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-	buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-	buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+	vim.keymap.nnoremap({ "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>" }, opts)
+	vim.keymap.nnoremap({ "gd", "<cmd>lua vim.lsp.buf.definition()<cr>" }, opts)
+	vim.keymap.nnoremap({ "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>" }, opts)
+	vim.keymap.nnoremap({ "gr", "<cmd>lua vim.lsp.buf.references()<cr>" }, opts)
 
-	buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-	buf_set_keymap("n", "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+	vim.keymap.nnoremap({ "K", "<cmd>lua vim.lsp.buf.hover()<cr>" }, opts)
+	vim.keymap.nnoremap({ "<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<cr>" }, opts)
 
-	buf_set_keymap("n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>", opts)
-	buf_set_keymap("n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>", opts)
-	buf_set_keymap("n", "<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>", opts)
-	buf_set_keymap("n", "<leader>D", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
+	vim.keymap.nnoremap({ "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>" }, opts)
+	vim.keymap.nnoremap({ "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>" }, opts)
+	vim.keymap.nnoremap({ "<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>" }, opts)
+	vim.keymap.nnoremap({ "<leader>D", "<cmd>lua vim.lsp.buf.type_definition()<cr>" }, opts)
 
-	buf_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-	buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+	vim.keymap.nnoremap({ "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>" }, opts)
+	vim.keymap.nnoremap({ "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>" }, opts)
 
-	buf_set_keymap("n", "<leader>e", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>", opts)
-	buf_set_keymap("n", "<leader>q", "<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>", opts)
-	buf_set_keymap("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>", opts)
-	buf_set_keymap("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<cr>", opts)
-
-	client.resolved_capabilities.document_formatting = false
+	vim.keymap.nnoremap({ "<leader>e", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>" }, opts)
+	vim.keymap.nnoremap({ "<leader>q", "<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>" }, opts)
+	vim.keymap.nnoremap({ "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>" }, opts)
+	vim.keymap.nnoremap({ "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<cr>" }, opts)
 end
 
 local server_setups = {}
@@ -103,11 +99,12 @@ server_setups["typescript"] = {
 			formatter_config_fallback = nil,
 
 			-- update imports on file move
-			update_imports_on_move = true,
+			update_imports_on_move = false,
 			require_confirmation_on_move = true,
 			watch_dir = nil,
 		})
 
+		client.resolved_capabilities.document_formatting = false
 		-- required to fix code action ranges
 		ts_utils.setup_client(client)
 	end,
@@ -138,12 +135,29 @@ end
 
 -- }}}
 
+local lspconfig = require("lspconfig")
+local configs = require("lspconfig/configs")
+
+if not lspconfig["vscode-solidity"] then
+	configs["vscode-solidity"] = {
+		default_config = {
+			cmd = { "node", "/home/jmederos/src/gh/vscode-solidity/out/src/server.js", "--stdio" },
+			filetypes = { "solidity" },
+			root_dir = function(fname)
+				return lspconfig.util.find_git_ancestor(fname) or vim.loop.os_homedir()
+			end,
+			settings = {},
+		},
+	}
+end
+
 local lspinstall = require("lspinstall")
 
 local setup_servers = function()
 	lspinstall.setup()
 	local servers = lspinstall.installed_servers()
 	table.insert(servers, "null-ls")
+	table.insert(servers, "vscode-solidity")
 	for _, server in pairs(servers) do
 		local server_setup = server_setups[server] or server_setups["default"]
 		local config = type(server_setup) == "function" and server_setup() or server_setup
@@ -158,3 +172,5 @@ require("lspinstall").post_install_hook = function()
 end
 
 setup_servers()
+
+-- vim.lsp.set_log_level("debug")

@@ -1,11 +1,9 @@
 --[[
 	TODO: check out this plugins
-	- akinsho/nvim-bufferline.lua
 	- welle/targets.vim (and other text-object related)
 	- iamcco/markdown-preview.nvim & npxbr/glow.nvim & plasticboy/vim-markdown
 	- simrat39/symbols-outline.nvim
 	- simrat39/rust-tools.nvim
-	- norcalli/nvim-terminal.lua
 --]]
 
 local use_config = function(config)
@@ -23,7 +21,6 @@ end
 local plugins = function(use)
 	use("wbthomason/packer.nvim")
 
-	-- TODO: Stop using coc
 	use({
 		"neoclide/coc.nvim",
 		branch = "release",
@@ -34,12 +31,24 @@ local plugins = function(use)
 	use({
 		"neovim/nvim-lspconfig",
 		requires = {
+			"kabouzeid/nvim-lspinstall",
 			"folke/lua-dev.nvim",
 			"jose-elias-alvarez/null-ls.nvim",
 			"jose-elias-alvarez/nvim-lsp-ts-utils",
 			"folke/trouble.nvim",
-			"kabouzeid/nvim-lspinstall",
-			-- "glepnir/lspsaga.nvim",
+			{
+				"ms-jpq/coq_nvim",
+				branch = "coq",
+				requires = {
+					"windwp/nvim-autopairs",
+					"windwp/nvim-ts-autotag",
+					{
+						"ms-jpq/coq.artifacts",
+						branch = "artifacts",
+					},
+				},
+				config = use_config("config.coq"),
+			},
 		},
 		config = use_config("config.lsp"),
 		disable = false,
@@ -51,17 +60,15 @@ local plugins = function(use)
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-nvim-lsp",
-			-- "hrsh7th/cmp-vsnip",
-			-- "hrsh7th/vim-vsnip",
-			"L3MON4D3/LuaSnip",
-			"saadparwaiz1/cmp_luasnip",
+			"hrsh7th/cmp-vsnip",
+			"hrsh7th/vim-vsnip",
 			"rafamadriz/friendly-snippets",
 			"onsails/lspkind-nvim",
 			"windwp/nvim-autopairs",
 			"windwp/nvim-ts-autotag",
 		},
 		config = use_config("config.cmp"),
-		disable = false,
+		disable = true,
 	})
 
 	use({
@@ -84,7 +91,9 @@ local plugins = function(use)
 
 	-- git {{{
 
-	use("tpope/vim-fugitive")
+	use({ "tpope/vim-fugitive", requires = {
+		"tpope/vim-rhubarb",
+	} })
 	use({
 		"TimUntersberger/neogit",
 		requires = "nvim-lua/plenary.nvim",
@@ -101,9 +110,9 @@ local plugins = function(use)
 	-- appearance {{{
 
 	use({
-		-- 'Luxed/ayu-vim',
 		"folke/tokyonight.nvim",
 		requires = {
+			"Luxed/ayu-vim",
 			"kyazdani42/nvim-tree.lua",
 			"hoob3rt/lualine.nvim",
 		},
@@ -133,11 +142,21 @@ local plugins = function(use)
 		"lukas-reineke/indent-blankline.nvim",
 		config = function()
 			require("indent_blankline").setup({
+				char = "┆", -- '|', '¦', '┆', '┊'
+				filetype_exclude = { "packer", "help" },
+				buftype_exclude = { "terminal" },
+				-- bufname = { "terminal" },
 				show_current_context = true,
-				-- space_char_blankline = " ",
+				space_char_blankline = " ",
+				use_treesitter = true,
+				show_trailing_blankline_indent = false,
 			})
 		end,
-		disable = true,
+		disable = false,
+	})
+	use({
+		"norcalli/nvim-colorizer.lua",
+		config = use_setup("colorizer"),
 	})
 	use("kyazdani42/nvim-web-devicons")
 
@@ -166,6 +185,8 @@ local plugins = function(use)
 	use("ggandor/lightspeed.nvim")
 	use("andymass/vim-matchup")
 	use("tjdevries/astronauta.nvim")
+	use("tomlion/vim-solidity")
+  use("wellle/targets.vim")
 
 	-- }}}
 end
@@ -183,3 +204,4 @@ require("packer").startup({
 })
 
 require("config.options")
+require("config.mappings")
