@@ -3,7 +3,7 @@ BIN_HOME := $(HOME)/.local/bin
 DATA_HOME := $(HOME)/.local/share
 CONFIG_HOME := $(HOME)/.config
 
-all: sway kitty zsh nvim tools
+all: i3 sway kitty zsh nvim tools
 clean: sway_clean kitty_clean nvim_clean tools_clean
 
 # Useful vars {{{
@@ -13,7 +13,27 @@ desktop_pkgs = pulseaudio.pkg pulseaudio-alsa.pkg \
 							 brightnessctl.pkg udisks2.pkg ntfs-3g.pkg \
 							 mpd.pkg mpc.pkg mpv.pkg imv.pkg
 
+xorg_pkgs = xorg-server.pkg
+
 fonts_pkgs = ttc-iosevka.pkg ttf-fira-code.pkg ttf-nerd-fonts-symbols.pkg
+
+# }}}
+
+# Sway {{{
+
+# Vars:
+i3_pkgs = $(desktop_pkgs) $(xorg_pkgs)
+i3_configs = $(CONFIG_HOME)/i3
+
+# Rules:
+i3: $(i3_configs) | $(i3_pkgs)
+
+$(i3_configs): | $(CONFIG_HOME)
+	ln -s $(PWD)/configs/xorg/$(notdir $@) $@
+
+# Clean
+i3_clean: | $(i3_pkgs:.pkg=.upkg)
+	rm -f $(i3_configs)
 
 # }}}
 
