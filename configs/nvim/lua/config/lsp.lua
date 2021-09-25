@@ -144,9 +144,34 @@ if not lspconfig["vscode-solidity"] then
 			cmd = { "node", "/home/jmederos/src/gh/vscode-solidity/out/src/server.js", "--stdio" },
 			filetypes = { "solidity" },
 			root_dir = function(fname)
-				return lspconfig.util.find_git_ancestor(fname) or vim.loop.os_homedir()
+				return lspconfig.util.find_git_ancestor(fname)
+					or lspconfig.util.find_node_modules_ancestor(fname)
+					or lspconfig.util.find_package_json_ancestor(fname)
+					or vim.loop.cwd()
 			end,
-			settings = {},
+			init_options = vim.fn.stdpath("cache"),
+			settings = {
+				solidity = {
+					nodemodulespackage = "solc",
+					compileUsingRemoteVersion = "latest",
+					compilerOptimization = 200,
+					compileUsingLocalVersion = "",
+					defaultCompiler = "remote", -- remote | localFile | localNodeModule | embedded
+					linter = "solhint", -- solhint | solium
+					solhintRules = nil,
+					formatter = "prettier", -- prettier | none
+					soliumRules = {
+						["imports-on-top"] = 0,
+						["variable-declarations"] = 0,
+						["indentation"] = { "off", 4 },
+						["quotes"] = { "off", "double" },
+					},
+					enabledAsYouTypeCompilationErrorCheck = true,
+					validationDelay = 1500,
+					packageDefaultDependenciesDirectory = "node_modules",
+					packageDefaultDependenciesContractsDirectory = "",
+				},
+			},
 		},
 	}
 end
