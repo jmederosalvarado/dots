@@ -199,7 +199,14 @@ local plugins = function(use)
 	use("tpope/vim-abolish")
 	use("tpope/vim-sleuth")
 	use("tpope/vim-obsession")
-	use("rmagatti/auto-session")
+	use({
+		"rmagatti/auto-session",
+		config = function()
+			require("auto-session").setup({
+				pre_save_cmds = { "tabdo NvimTreeClose" },
+			})
+		end,
+	})
 	use("ggandor/lightspeed.nvim")
 	use("andymass/vim-matchup")
 	use("tjdevries/astronauta.nvim")
@@ -213,8 +220,8 @@ local plugins = function(use)
 		end,
 	})
 	use({
-'iamcco/markdown-preview.nvim',
-run = 'cd app && yarn install'
+		"iamcco/markdown-preview.nvim",
+		run = "cd app && yarn install",
 	})
 
 	-- }}}
