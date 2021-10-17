@@ -5,6 +5,13 @@ require("nvim-treesitter.configs").setup({
 	autopairs = { enable = true },
 	autotag = { enable = true },
 	matchup = { enable = true },
+	textsubjects = {
+        enable = true,
+        keymaps = {
+            ['.'] = 'textsubjects-smart',
+            [';'] = 'textsubjects-container-outer',
+        }
+    },
 
 	playground = {
 		enable = true,

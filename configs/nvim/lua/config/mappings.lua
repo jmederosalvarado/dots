@@ -1,11 +1,9 @@
-require("astronauta.keymap")
-
 vim.keymap.nnoremap({ "<leader>gs", "<cmd>Git<cr>" })
 vim.keymap.nnoremap({ "<leader>gh", "<cmd>diffget //2<cr>" })
 vim.keymap.nnoremap({ "<leader>gl", "<cmd>diffget //3<cr>" })
 
-vim.keymap.nnoremap({ "<tab>", "gt" })
-vim.keymap.nnoremap({ "<s-tab>", "gT" })
+-- vim.keymap.nnoremap({ "<tab>", "gt" })
+-- vim.keymap.nnoremap({ "<s-tab>", "gT" })
 vim.keymap.nnoremap({ "<leader><tab>n", "<cmd>tabnew<cr>" })
 vim.keymap.nnoremap({ "<leader><tab>c", "<cmd>tabclose<cr>" })
 vim.keymap.nnoremap({ "<leader><tab>o", "<cmd>tabonly<cr>" })
@@ -25,6 +23,7 @@ vim.keymap.vmap({ "y", "y`]" })
 
 -- Make the experience in the terminal more consistent
 vim.keymap.tnoremap({ "<c-]>", "<c-\\><c-n>" })
+vim.keymap.nnoremap({ "<leader>tt", "<cmd>te<CR>" })
 
 vim.keymap.vnoremap({ "J", ":m '>+1<CR>gv=gv" })
 vim.keymap.vnoremap({ "K", ":m '<-2<CR>gv=gv" })

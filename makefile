@@ -3,7 +3,11 @@ BIN_HOME := $(HOME)/.local/bin
 DATA_HOME := $(HOME)/.local/share
 CONFIG_HOME := $(HOME)/.config
 
-all: i3 sway kitty zsh nvim tools
+default:
+	@echo "make [server | desktop]"
+
+server: zsh nvim tools
+desktop: i3 sway kitty
 clean: sway_clean kitty_clean nvim_clean tools_clean
 
 # Useful vars {{{
@@ -101,7 +105,7 @@ zsh_clean: | $(zsh_pkgs:.pkg=.upkg)
 # Neovim {{{
 
 # Vars:
-nvim_configs = $(CONFIG_HOME)/nvim/init.lua $(CONFIG_HOME)/nvim/lua $(CONFIG_HOME)/nvim/config $(CONFIG_HOME)/nvim/coc-settings.json
+nvim_configs = $(CONFIG_HOME)/nvim/init.lua $(CONFIG_HOME)/nvim/lua $(CONFIG_HOME)/nvim/after $(CONFIG_HOME)/nvim/config $(CONFIG_HOME)/nvim/coc-settings.json
 nvim_packer = $(DATA_HOME)/nvim/site/pack/packer/start/packer.nvim
 nvim_plug = $(DATA_HOME)/nvim/site/autoload/plug.vim
 nvim_source = cache/nvim
@@ -116,7 +120,7 @@ $(nvim_bin): $(nvim_source) | $(nvim_build_deps)
 	sudo $(MAKE) --directory $(nvim_source) install
 
 $(nvim_source): | git.pkg
-	git clone --depth 1 https://github.com/neovim/neovim $@
+	git clone https://github.com/neovim/neovim $@
 
 $(CONFIG_HOME)/nvim:
 	mkdir -p $@

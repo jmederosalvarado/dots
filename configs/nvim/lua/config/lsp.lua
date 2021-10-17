@@ -1,20 +1,28 @@
-require("astronauta.keymap")
-
 -- Appearance
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+vim.diagnostic.config({
 	virtual_text = { spacing = 4, prefix = "●" },
 	severity_sort = true,
 	update_in_insert = true,
 })
 
-local signs = { Error = " ", Warning = " ", Hint = " ", Information = " " }
+vim.fn.sign_define(
+	"DiagnosticSignError",
+	{ text = " ", texthl = "LspDiagnosticsDefaultError", numhl = "LspDiagnosticsDefaultError" }
+)
+vim.fn.sign_define(
+	"DiagnosticSignWarn",
+	{ text = " ", texthl = "LspDiagnosticsDefaultWarning", numhl = "LspDiagnosticsDefaultWarning" }
+)
+vim.fn.sign_define(
+	"DiagnosticSignInfo",
+	{ text = " ", texthl = "LspDiagnosticsDefaultInfo", numhl = "LspDiagnosticsDefaultInfo" }
+)
+vim.fn.sign_define(
+	"DiagnosticSignHint",
+	{ text = " ", texthl = "LspDiagnosticsDefaultHint", numhl = "LspDiagnosticsDefaultHint" }
+)
 
-for type, icon in pairs(signs) do
-	local hl = "LspDiagnosticsSign" .. type
-	vim.fn.sign_define(hl, { text = icon, texthl = hl })
-end
-
-local default_on_attach = function(client, bufnr)
+local default_on_attach = function(_, bufnr)
 	local opts = { buffer = bufnr, silent = true }
 
 	-- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -57,6 +65,22 @@ server_setups["lua"] = require("lua-dev").setup({
 		on_attach = default_on_attach,
 	},
 })
+
+-- }}}
+
+-- Rust {{{
+
+server_setups["rust"] = {
+	on_attach = function(client, bufnr)
+		default_on_attach(client, bufnr)
+		client.resolved_capabilities.document_formatting = true
+		vim.cmd("command! Format lua vim.lsp.buf.formatting_sync()")
+		vim.cmd("autocmd BufWritePost <buffer> lua vim.lsp.buf.formatting_sync()")
+	end,
+	settings = {
+		["rust-analyzer.checkOnSave.command"] = "clippy",
+	},
+}
 
 -- }}}
 
@@ -121,6 +145,10 @@ server_setups["null-ls"] = function()
 			null_ls.builtins.formatting.black,
 			null_ls.builtins.formatting.isort,
 			null_ls.builtins.formatting.stylua,
+			null_ls.builtins.formatting.prettierd,
+			null_ls.builtins.formatting.prettier_d_slim.with({
+				filetypes = vim.fn.extend(null_ls.builtins.formatting.prettier_d_slim.filetypes, { "solidity" }),
+			}),
 		},
 	})
 	return {
@@ -135,63 +163,25 @@ end
 
 -- }}}
 
-local lspconfig = require("lspconfig")
-local configs = require("lspconfig/configs")
-
-if not lspconfig["vscode-solidity"] then
-	configs["vscode-solidity"] = {
-		default_config = {
-			cmd = { "node", "/home/jmederos/src/gh/vscode-solidity/out/src/server.js", "--stdio" },
-			filetypes = { "solidity" },
-			root_dir = function(fname)
-				return lspconfig.util.find_git_ancestor(fname)
-					or lspconfig.util.find_node_modules_ancestor(fname)
-					or lspconfig.util.find_package_json_ancestor(fname)
-					or vim.loop.cwd()
-			end,
-			init_options = vim.fn.stdpath("cache"),
-			settings = {
-				solidity = {
-					nodemodulespackage = "solc",
-					compileUsingRemoteVersion = "latest",
-					compilerOptimization = 200,
-					compileUsingLocalVersion = "",
-					defaultCompiler = "remote", -- remote | localFile | localNodeModule | embedded
-					linter = "solhint", -- solhint | solium
-					solhintRules = nil,
-					formatter = "prettier", -- prettier | none
-					soliumRules = {
-						["imports-on-top"] = 0,
-						["variable-declarations"] = 0,
-						["indentation"] = { "off", 4 },
-						["quotes"] = { "off", "double" },
-					},
-					enabledAsYouTypeCompilationErrorCheck = true,
-					validationDelay = 1500,
-					packageDefaultDependenciesDirectory = "node_modules",
-					packageDefaultDependenciesContractsDirectory = "",
-				},
-			},
-		},
-	}
-end
-
 local lspinstall = require("lspinstall")
 
 local setup_servers = function()
 	lspinstall.setup()
 	local servers = lspinstall.installed_servers()
 	table.insert(servers, "null-ls")
-	table.insert(servers, "vscode-solidity")
+	table.insert(servers, "r_language_server")
 	for _, server in pairs(servers) do
 		local server_setup = server_setups[server] or server_setups["default"]
 		local config = type(server_setup) == "function" and server_setup() or server_setup
+		config.capabilities = require("cmp_nvim_lsp").update_capabilities(
+			config.capabilities or vim.lsp.protocol.make_client_capabilities()
+		)
 		require("lspconfig")[server].setup(config)
 	end
 end
 
 -- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
-require("lspinstall").post_install_hook = function()
+lspinstall.post_install_hook = function()
 	setup_servers() -- reload installed servers
 	vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
 end

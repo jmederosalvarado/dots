@@ -1,4 +1,3 @@
-require("astronauta.keymap")
 local nnoremap = vim.keymap.nnoremap
 
 require("telescope").setup({

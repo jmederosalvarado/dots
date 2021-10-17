@@ -13,7 +13,7 @@ setopt multios              # Allow multiple redirection streams
 
 # HISTORY {{{
 
-HISTFILE="$HOME/.zhistory" 
+HISTFILE="$HOME/.zhistory"
 HISTSIZE=50000
 SAVEHIST=10000
 
@@ -163,7 +163,9 @@ alias ll='ls -lh'
 
 # }}}
 
-# PATH {{{
+# TOOLS SETUP {{{
+
+source /usr/share/nvm/init-nvm.sh
 
 # Add path to user local tools
 export PATH="$HOME/.local/bin:$PATH"
