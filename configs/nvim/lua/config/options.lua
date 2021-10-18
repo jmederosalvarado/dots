@@ -9,7 +9,7 @@ vim.o.smartindent = true -- insert indents automatically
 
 vim.o.number = true
 vim.o.relativenumber = true
-vim.o.scrolloff = 4
+-- vim.o.scrolloff = 4
 vim.o.sidescrolloff = 4 -- columns of context
 vim.o.cursorline = true
 -- vim.o.cursorcolumn = true
@@ -22,7 +22,7 @@ vim.o.hlsearch = false -- don't highlight search
 vim.o.hidden = true -- enable modified buffers in background
 
 vim.o.list = true -- show some invisible characters (tabs...
-vim.o.listchars = "trail:·,tab: "
+vim.o.listchars = "trail:·,tab:» "
 vim.o.showbreak = "↪ "
 
 vim.o.mouse = "a" -- enable mouse mode

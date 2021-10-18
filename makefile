@@ -147,7 +147,7 @@ nvim_clean: | $(nvim_build_deps:.pkg=.upkg)
 
 tools_pkgs = git.pkg github-cli.pkg gitlab-glab-bin.pkg \
 						 docker.pkg docker-compose.pkg tmux.pkg ranger.pkg
-tools_configs = $(CONFIG_HOME)/ranger
+tools_configs = $(CONFIG_HOME)/ranger $(CONFIG_HOME)/tmux
 
 tools: $(tools_configs) | $(tools_pkgs)
 
@@ -176,9 +176,9 @@ $(CONFIG_HOME) $(DATA_HOME) $(BIN_HOME):
 	mkdir -p $@
 
 %.pkg:
-	paru -Qi $* &>/dev/null || paru -S --needed $*
+	@paru -Qi $* &>/dev/null || echo install $*
 
 %.upkg:
-	# paru -Qi $* &>/dev/null && paru -R $*
+	@paru -Qi $* &>/dev/null && echo remove $*
 
 # }}}

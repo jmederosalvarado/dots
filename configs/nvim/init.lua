@@ -197,7 +197,7 @@ local plugins = function(use)
 	use("tpope/vim-eunuch")
 	use("tpope/vim-unimpaired")
 	use("tpope/vim-abolish")
-	use("tpope/vim-sleuth")
+	-- use("tpope/vim-sleuth")
 	use("tpope/vim-obsession")
 	use({
 		"rmagatti/auto-session",
@@ -233,7 +233,7 @@ require("packer").startup({
 		display = {
 			profile = true,
 			open_fn = function()
-				return require("packer.util").float({ border = "single" })
+				return require("packer.util").float({ border = "solid" })
 			end,
 		},
 	},

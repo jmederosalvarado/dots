@@ -70,17 +70,5 @@ tree.setup({
 	},
 })
 
-vim.cmd("nnoremap <C-n> :NvimTreeToggle<CR>")
-vim.cmd("nnoremap - :NvimTreeFindFile<CR>")
-
--- local tree_old_open = tree.open
--- tree.open = function()
--- 	require("bufferline.state").set_offset(31, "FileTree")
--- 	tree_old_open()
--- end
-
--- local tree_old_close = tree.close
--- tree.close = function()
--- 	require("bufferline.state").set_offset(0)
--- 	tree_old_close()
--- end
+vim.cmd("nnoremap <silent> <C-n> :NvimTreeToggle<CR>")
+vim.cmd("nnoremap <silent> - :NvimTreeFindFile<CR>")

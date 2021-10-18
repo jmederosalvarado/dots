@@ -1,6 +1,6 @@
 -- Appearance
 vim.diagnostic.config({
-	virtual_text = { spacing = 4, prefix = "●" },
+	virtual_text = { spacing = 4, prefix = "●", source = "always" },
 	severity_sort = true,
 	update_in_insert = true,
 })
